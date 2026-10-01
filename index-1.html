@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071430">
+<title>Bunksite × Cave — SRM IST Trichy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d10; --panel:#12161c; --panel2:#171c24; --card:#1b212b; --text:#f4f7fb;
+  --muted:#9aa5b5; --line:#28313d; --accent:#8b5cf6; --accent2:#22c55e; --danger:#ef4444;
+  --warn:#f59e0b; --blue:#38bdf8; --shadow:0 16px 45px rgba(0,0,0,.22); --radius:18px;
+}
+[data-theme="light"]{
+  --bg:#f5f7fb; --panel:#fff; --panel2:#f8fafc; --card:#fff; --text:#111827;
+  --muted:#637083; --line:#e4e8ee; --shadow:0 12px 35px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+a{color:inherit}
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;padding:18px 14px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 18px}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#4f46e5);display:grid;place-items:center;font-weight:900}
+.brand h1{font-size:20px;margin:0}
+.brand small{color:var(--muted)}
+.profile-mini{display:flex;gap:10px;align-items:center;padding:12px;background:var(--panel2);border:1px solid var(--line);border-radius:16px}
+.avatar{width:38px;height:38px;border-radius:12px;background:#272e39;display:grid;place-items:center;font-weight:800;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.nav{display:grid;gap:6px}
+.nav button,.nav a{border:0;background:transparent;color:var(--muted);text-align:left;padding:11px 12px;border-radius:12px;text-decoration:none}
+.nav button:hover,.nav button.active,.nav a:hover{background:var(--panel2);color:var(--text)}
+.side-footer{margin-top:auto;display:grid;gap:8px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--text);padding:10px 14px;border-radius:12px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.success{background:var(--accent2);border-color:var(--accent2);color:#06210e}
+.btn.danger{background:transparent;border-color:#6b2222;color:#ffb4b4}
+.btn.small{padding:7px 10px;font-size:13px}
+.btn.ghost{background:transparent}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
+.badge.good{color:#a7f3d0;border-color:#1f7a52;background:rgba(34,197,94,.08)}
+.badge.warn{color:#fde68a;border-color:#8a650d;background:rgba(245,158,11,.08)}
+.badge.bad{color:#fecaca;border-color:#8b1e1e;background:rgba(239,68,68,.08)}
+.main{padding:20px 24px 120px;max-width:1500px;width:100%;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:22px}
+.topbar h2{margin:0;font-size:24px}
+.topbar .actions{display:flex;gap:8px;align-items:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.grid.stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+.stat{padding:18px}
+.stat .label{color:var(--muted);font-size:13px}
+.stat .value{font-size:31px;font-weight:850;margin-top:6px}
+.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.grid.main-grid{grid-template-columns:1.45fr 1fr}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.section{padding:18px}
+.section h3{margin:0 0 14px;font-size:17px}
+.progress{height:12px;background:var(--panel2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.progress > div{height:100%;border-radius:999px;background:linear-gradient(90deg,#ef4444,#f59e0b,#22c55e)}
+.health{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}
+.chart{height:230px;display:flex;align-items:end;gap:6px;padding:10px;border-top:1px solid var(--line)}
+.bar{flex:1;min-width:4px;border-radius:7px 7px 2px 2px;background:var(--accent);position:relative}
+.bar span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);margin-bottom:3px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{color:var(--muted);font-weight:650}
+.notice{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);line-height:1.45}
+.notice.bad{border-color:#7f1d1d;background:rgba(127,29,29,.14)}
+.notice.warn{border-color:#8a650d;background:rgba(120,72,8,.12)}
+.notice.good{border-color:#1f7a52;background:rgba(34,197,94,.08)}
+.kpi-row{display:flex;flex-wrap:wrap;gap:8px}
+.kpi{padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:grid;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:13px;color:var(--muted)}
+.field input,.field select,.field textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--text);outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,92,246,.12)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.split{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.day-classes{display:grid;gap:9px}
+.class-row{display:grid;grid-template-columns:1.5fr .8fr .9fr auto;gap:9px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.class-row .subject{font-weight:700}
+.class-row .meta{font-size:12px;color:var(--muted)}
+.status-buttons{display:flex;gap:6px;flex-wrap:wrap}
+.status-buttons button{padding:6px 8px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:12px}
+.status-buttons button.selected.present{background:rgba(34,197,94,.14);border-color:#1f7a52;color:#86efac}
+.status-buttons button.selected.absent{background:rgba(239,68,68,.12);border-color:#7f1d1d;color:#fecaca}
+.status-buttons button.selected.od{background:rgba(56,189,248,.1);border-color:#075985;color:#bae6fd}
+.status-buttons button.selected.medical{background:rgba(139,92,246,.12);border-color:#6d28d9;color:#ddd6fe}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.calendar .head{font-size:11px;color:var(--muted);text-align:center;padding:8px 2px}
+.calendar .cell{min-height:70px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px;display:flex;flex-direction:column;gap:5px}
+.calendar .cell.today{outline:2px solid var(--accent)}
+.calendar .cell.selected{background:rgba(139,92,246,.12)}
+.calendar .date{font-weight:750;font-size:12px}
+.dotrow{display:flex;gap:4px;flex-wrap:wrap}
+.dot{width:7px;height:7px;border-radius:50%;background:#475569}
+.dot.present{background:#22c55e}.dot.absent{background:#ef4444}.dot.od{background:#38bdf8}.dot.medical{background:#8b5cf6}
+.chat-fab{position:fixed;right:24px;bottom:24px;width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,#8b5cf6,#4f46e5);color:#fff;font-size:24px;box-shadow:0 18px 42px rgba(79,70,229,.45);z-index:20}
+.chat{position:fixed;right:24px;bottom:92px;width:min(430px,calc(100vw - 28px));height:620px;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.32);display:none;flex-direction:column;z-index:19;overflow:hidden}
+.chat.open{display:flex}
+.chat-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.chat-log{flex:1;overflow:auto;padding:14px;display:grid;align-content:start;gap:10px}
+.msg{max-width:86%;padding:10px 12px;border-radius:14px;line-height:1.45;font-size:13px}
+.msg.bot{background:var(--panel2);border:1px solid var(--line)}
+.msg.user{justify-self:end;background:var(--accent);color:#fff}
+.chat-input{padding:10px;border-top:1px solid var(--line);display:flex;gap:8px}
+.chat-input textarea{flex:1;resize:none;height:48px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+.login-shell{min-height:100vh;display:grid;place-items:center;padding:25px;background:radial-gradient(circle at top,#20263a 0,#0b0d10 52%)}
+.login-card{width:min(960px,100%);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
+.login-left{padding:40px;background:linear-gradient(145deg,#111827,#17152b)}
+.login-left h1{font-size:44px;margin:10px 0}
+.login-left p{color:#cbd5e1;line-height:1.7}
+.login-right{padding:32px}
+.mode-tabs{display:flex;gap:6px;margin-bottom:18px}
+.mode-tabs button{flex:1}
+.mini{font-size:12px;color:var(--muted);line-height:1.5}
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;place-items:center;z-index:50;padding:18px}
+.modal-back.open{display:grid}
+.modal{width:min(550px,100%);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px}
+.toast-wrap{position:fixed;top:18px;right:18px;z-index:60;display:grid;gap:8px}
+.toast{padding:12px 14px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;box-shadow:var(--shadow);font-size:13px}
+@media(max-width:1100px){.shell{grid-template-columns:82px 1fr}.sidebar{padding:14px 10px}.brand .words,.profile-mini .words,.nav button .navtext,.side-footer .words{display:none}.nav button{text-align:center}.grid.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.shell{display:block}.sidebar{position:fixed;bottom:0;left:0;right:0;top:auto;height:auto;z-index:30;border-right:0;border-top:1px solid var(--line);display:flex;flex-direction:row;justify-content:space-around}.brand,.profile-mini,.side-footer{display:none}.nav{display:flex;overflow:auto}.nav button{padding:10px 9px}.main{padding:16px 14px 95px}.grid.main-grid,.grid.two,.form-grid,.login-card{grid-template-columns:1fr}.grid.stats{grid-template-columns:repeat(2,1fr)}.class-row{grid-template-columns:1fr}.chat{right:12px;bottom:82px}.chat-fab{right:12px;bottom:74px}.login-left{padding:26px}.login-left h1{font-size:34px}}
+#cave p.s{color:var(--mut);margin:0 0 12px}
+#cave button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+#cave button.on{background:var(--ac);color:#fff}
+#cave #q{flex:1;min-width:200px}
+#cave .fl h3{margin:0 0 8px;font-size:14px;color:var(--mut)}
+#cave .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+#cave .t{border-radius:10px;padding:8px;color:#fff;cursor:pointer;min-height:64px;border:2px solid transparent}
+#cave .t b{display:block}
+#cave .t small{opacity:.95}
+#cave .g{background:var(--g)}
+#cave .y{background:var(--y);color:#241a00}
+#cave .r{background:var(--r)}
+#cave .sel{border-color:var(--fg)}
+#cave #scene{perspective:1600px;height:860px;overflow:hidden;position:relative;background:linear-gradient(#a9cdee,#e4f0fb 45%,#86b874 45%);border-radius:10px;touch-action:pan-y;cursor:grab}
+#cave #cap{position:absolute;left:10px;top:8px;font-size:12px;color:#1f3a5f;z-index:2;background:#fffc;padding:3px 8px;border-radius:6px}
+#cave #bld{position:absolute;left:50%;top:92%;width:480px;height:180px;margin-left:-240px;margin-top:-90px;transform-style:preserve-3d;transform:translateY(var(--ty,0px)) scale(calc(var(--s,1)*var(--z,1))) rotateX(var(--rx,62deg)) rotateZ(var(--rz,-25deg))}
+#cave #bld div,#cave #bld span{position:absolute}
+#cave .gd{left:-170px;top:-130px;width:780px;height:570px;background:#7fb069;transform:translateZ(-6px)}
+#cave .ap{left:-24px;top:-20px;width:528px;height:226px;background:#d9cfba;border-radius:6px;transform:translateZ(-5px)}
+#cave .rd{left:-170px;top:262px;width:780px;height:72px;background:linear-gradient(90deg,#fff 50%,transparent 50%) 0 34px/40px 4px repeat-x,#4b5058;transform:translateZ(-5px)}
+#cave .pa{left:200px;top:196px;width:44px;height:66px;background:#d9cfba;transform:translateZ(-5px)}
+#cave .sg{left:10px;top:216px;width:180px;height:26px;transform-origin:bottom;transform:rotateX(-90deg);background:#1d3f8f;color:#fff;font:600 10px/1.1 system-ui;display:flex;align-items:center;justify-content:center;text-align:center;border:3px solid #fff}
+#cave .tree{width:0;height:0;transform-style:preserve-3d}
+#cave .tp{left:-30px;top:-84px;width:60px;height:84px;transform-origin:bottom;transform:rotateX(-90deg);background:radial-gradient(circle 26px at 50% 30px,#2e8b3d 0 23px,#5bbd68 24px 26px,transparent 27px),linear-gradient(#6b4423,#6b4423) 50% 100%/7px 36px no-repeat}
+#cave .tp.b{transform:rotateZ(90deg) rotateX(-90deg)}
+#cave .sh{left:-20px;top:-9px;width:40px;height:18px;background:#0003;border-radius:50%;transform:translateZ(-4px)}
+#cave .slab.op .fa{border-color:#d84e55;box-shadow:0 0 18px #d84e55;background:rgba(220,228,255,.85)}
+#cave .slab{inset:0;transform-style:preserve-3d}
+#cave .fa{inset:0;background:rgba(206,211,219,.65);border:2px solid #7d8696;transform:translateZ(0)}
+#cave .co{left:0;right:48px;top:74px;height:32px;background:rgba(255,255,255,.5);transform:translateZ(1px)}
+#cave .st{right:4px;top:8px;width:40px;height:164px;background:#8f99aa;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:translateZ(1px)}
+#cave .bw{left:0;top:-60px;width:480px;height:60px;transform-origin:bottom;transform:rotateX(-90deg);background:repeating-linear-gradient(90deg,transparent 0 76px,#fffb 76px 82px),linear-gradient(#7fb4e6,#2f6aa8);opacity:.6}
+#cave .sw{left:0;top:0;width:60px;height:180px;transform-origin:left;transform:rotateY(-90deg);background:repeating-linear-gradient(0deg,transparent 0 76px,#fffb 76px 82px),linear-gradient(90deg,#7fb4e6,#2f6aa8);opacity:.5}
+#cave .lb{left:-32px;top:82px;font-size:13px;font-weight:700;color:#fff;background:#3b4252;border-radius:50%;width:22px;height:22px;text-align:center;line-height:22px;transform:translateZ(1px)}
+#cave .rs{left:250px;top:64px;width:150px;height:44px;background:#b3261e;color:#fff;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;transform:translateZ(3px);border:3px solid #fff}
+#cave .tk{width:46px;height:46px;border-radius:50%;background:radial-gradient(#f1f4f8 34%,#8fa0b5 36%);transform:translateZ(2px)}
+#cave .rm{width:120px;height:66px;transform-style:preserve-3d;cursor:pointer}
+#cave .rm div,#cave .rm i,#cave .rm u{position:absolute}
+#cave .fo{inset:0;background:repeating-linear-gradient(0deg,#0000 0 11px,#0002 11px 12px),repeating-linear-gradient(90deg,#0000 0 11px,#0002 11px 12px),var(--c);transform:translateZ(1px);border:1px solid #0006}
+#cave .lbl{left:6px;top:5px;width:108px;transform:translateZ(13px);background:#0f172ad0;border:2px solid var(--c);color:#fff;padding:2px 3px;border-radius:8px;text-align:center;font-size:10px;line-height:1.15}
+#cave .lbl b{display:block;font-size:22px;font-weight:800;letter-spacing:.5px}
+#cave .lbl em{display:block;font-style:normal;font-size:8px;opacity:.85}
+#cave .cl{width:56px;height:22px;background:#fff;color:#111;font:800 11px/18px system-ui;text-align:center;border-radius:4px;border:2px solid var(--c);transform:translateZ(2px);overflow:hidden}
+#cave .rm i{width:46px;height:9px;transform-style:preserve-3d}
+#cave .rm i::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 18%,#fffb 18% 26%,transparent 26% 58%,#fffb 58% 66%,transparent 66%),#b98246;border:1px solid #6b4423;transform:translateZ(9px)}
+#cave .occ i::before{background:radial-gradient(circle,#173a6b 0 2.6px,transparent 3.2px) 0 0/15.3px 9px,#b98246}
+#cave .rm i::after{content:"";position:absolute;left:0;top:0;width:100%;height:9px;background:#7a4f24;transform-origin:bottom;transform:rotateX(-90deg)}
+#cave .rm i b{position:absolute;left:0;top:-9px;width:100%;height:9px;background:#6a4320;transform-origin:bottom;transform:rotateX(-90deg)}
+#cave .wb,#cave .wf{left:0;width:120px;height:52px;transform-origin:bottom;transform:rotateX(-90deg);background:color-mix(in srgb,var(--c) 38%,transparent);border:1px solid var(--c)}
+#cave .wb{top:-52px}
+#cave .wf{top:14px}
+#cave .wd::after{content:"";position:absolute;left:50px;bottom:0;width:20px;height:38px;background:#6b4423;border:1px solid #3d2410}
+#cave .wk::after{content:"";position:absolute;left:8px;top:14px;width:50px;height:22px;background:#1f4d3a;border:2px solid #ddd;box-shadow:0 3px 0 #b9a27c}
+#cave .ac .wk::before{content:"";position:absolute;left:92px;top:2px;width:24px;height:6px;background:#fff;border-radius:2px}
+#cave .nac .wk::before{content:"";position:absolute;left:100px;top:2px;width:12px;height:12px;border-radius:50%;background:radial-gradient(#444 30%,#ddd 32%)}
+#cave .wl,#cave .wr{top:0;width:52px;height:66px;transform-origin:left;transform:rotateY(-90deg);background:color-mix(in srgb,var(--c) 34%,transparent);border:1px solid var(--c)}
+#cave .wl{left:0}
+#cave .wr{left:120px}
+#cave .wi{background:linear-gradient(135deg,#eaf6ff,#8fc3ee 60%,#cfe8ff);border:2px solid #fff;box-shadow:0 3px 0 #cfd6de,inset 0 0 0 1px #5a7ea3}
+#cave .wi::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff}
+#cave .wi::after{content:"";position:absolute;top:50%;left:0;right:0;height:2px;margin-top:-1px;background:#fff}
+#cave .sd{left:10px;top:12px;width:34px;height:42px}
+#cave .rm.sel .fo{outline:3px solid #fff;box-shadow:0 0 16px #fff}
+#cave #det{position:sticky;bottom:8px;border-color:var(--ac)}
+#cave #cd{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
+#cave .res{padding:8px 0;border-top:1px solid var(--bd);cursor:pointer}
+#cave .leg span{margin-right:12px}
+#cave .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+#cave a.wa{display:inline-block;background:#25d366;color:#04310f;font-weight:600;text-decoration:none;padding:9px 14px;border-radius:8px}
+#cave .sc{box-shadow:0 6px 18px #0002}
+#cave .ttl{font-weight:700;font-size:16px;margin-bottom:8px}
+#cave .sc #q{width:100%;padding:12px;font-size:15px}
+#cave .chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+#cave .chip,#cave #fb button{border-radius:20px;padding:5px 12px;font-size:13px}
+#cave #fb button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+#cave button.big{width:100%;padding:13px;font-weight:700;letter-spacing:.5px;font-size:15px;border-radius:10px}
+#cave .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:4px}
+#cave .tabs button{flex:1;border:0;border-bottom:3px solid transparent;border-radius:0;background:none;font-weight:600;color:var(--mut)}
+#cave .tabs button.on{color:var(--ac);border-bottom-color:var(--ac);background:none}
+#cave .tiles{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important}
+#cave .bc{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--g);border-radius:10px;padding:10px 12px;cursor:pointer;margin-top:6px}
+#cave .s-y{border-left-color:var(--y)}
+#cave .s-r{border-left-color:var(--r)}
+#cave .bc .l{flex:1}
+#cave .bc .l b{display:block;font-size:17px}
+#cave .bc .l small{display:block;color:var(--mut);font-size:12px}
+#cave .bc .l em{font-style:normal;font-size:10px;background:var(--ac);color:#fff;padding:1px 7px;border-radius:4px}
+#cave .bc .m{text-align:center}
+#cave .bc .m b{display:block;font-size:11px;font-weight:500;color:var(--mut)}
+#cave .bc .m span{font-size:17px;font-weight:700}
+#cave .bc .r{text-align:right}
+#cave .bc .st{display:inline-block;background:var(--g);color:#fff;padding:2px 8px;border-radius:6px;font-size:11px}
+#cave .s-y .st{background:var(--y);color:#241a00}
+#cave .s-r .st{background:var(--r)}
+#cave .bc .r small{display:block;color:var(--mut);font-size:11px}
+#cave .bc .go{display:block;color:var(--ac);font-weight:700;font-size:12px}
+#cave .bc.sel{outline:2px solid var(--ac)}
+/* ===== Merged theme: SRM IST Trichy ===== */
+:root{--bg:#071430;--panel:#0c1d42;--panel2:#12295a;--card:#0f2350;--line:#23407c;--text:#eef2fb;--muted:#9fb1d8;--accent:#2f6bff;--gold:#f4b41a;--onaccent:#fff;--overlay:.8;--shadow:0 16px 45px rgba(2,8,24,.4)}
+[data-theme="light"]{--bg:#eef2f9;--panel:#fff;--panel2:#f3f6fc;--card:#fff;--line:#d6dfef;--text:#0a1b3f;--muted:#5b6b8c;--shadow:0 12px 35px rgba(10,27,63,.10)}
+html{background:var(--bg)}body{background:transparent;font-family:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Figtree",system-ui,sans-serif;letter-spacing:-.01em}
+#scenery{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+#scenery i{position:absolute;inset:-4%;background-size:cover;background-position:center;opacity:0;transition:opacity 2.4s ease}
+#scenery i.on{opacity:1;animation:kb 26s ease-in-out infinite alternate}
+#scenery b{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) calc(var(--overlay)*100%),transparent)}
+@keyframes kb{to{transform:scale(1.08) translate(-1.5%,-1%)}}
+.sidebar{background:color-mix(in srgb,var(--panel) 90%,transparent);backdrop-filter:blur(16px)}
+.btn{transition:transform .15s,filter .15s}.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}.btn.primary:hover{filter:brightness(1.12)}
+.nav button.active{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--text);box-shadow:inset 3px 0 0 var(--gold)}
+.logo,.chat-fab{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#000));color:var(--onaccent)}
+.msg.user{background:var(--accent);color:var(--onaccent)}
+.calendar .cell.today{outline-color:var(--accent)}.calendar .cell.selected{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 24%,transparent)}
+.bar{background:linear-gradient(var(--gold),var(--accent))}.progress>div{transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.login-shell{background:transparent}
+.login-card{backdrop-filter:blur(18px);background:color-mix(in srgb,var(--panel) 84%,transparent)}
+.login-left{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 38%,#050d22),#050d22 78%);color:#fff}.login-left h1{font-size:48px}
+[data-theme="light"] .badge.good{color:#0f7a4d}[data-theme="light"] .badge.warn{color:#9a6a00}[data-theme="light"] .badge.bad{color:#b42318}
+[data-theme="light"] .btn.danger{color:#b42318;border-color:#e6a4a0}
+.modal{animation:pop .22s ease}.toast{animation:tin .25s ease}.pgin{animation:pgin .35s cubic-bezier(.2,.7,.2,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}}@keyframes tin{from{transform:translateX(24px);opacity:0}}@keyframes pgin{from{opacity:0;transform:translateY(8px)}}
+html[data-anim="off"] *,html[data-anim="off"] *::before,html[data-anim="off"] *::after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:calc(var(--radius) + 6px);min-height:230px;margin-bottom:14px;color:#fff;box-shadow:var(--shadow);isolation:isolate;display:flex;align-items:flex-end}
+.hero .ph{position:absolute;inset:0;z-index:-2;background:var(--hbg) center/cover;animation:kb 30s ease-in-out infinite alternate}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(5,13,34,.94) 8%,rgba(5,13,34,.55) 55%,rgba(5,13,34,.12))}
+.hero-in{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-end;padding:30px;width:100%}
+.hero h2{font-size:clamp(26px,4vw,40px);margin:4px 0 8px;line-height:1.05}.hero small{color:var(--gold);font-weight:600}.hero p{margin:0;color:#dbe4f7;max-width:46ch;line-height:1.5}
+.hero-rooms{display:grid;gap:8px;justify-items:start;max-width:430px}.hero-rooms>span{font-size:12px;color:#c5d2ee}.hero-rooms>div{display:flex;flex-wrap:wrap;gap:6px}
+.rchip{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);backdrop-filter:blur(8px);color:#fff;border-radius:999px;padding:6px 11px;font-size:12px;transition:transform .15s,background .15s}.rchip:hover{background:rgba(255,255,255,.22);transform:translateY(-2px)}
+/* customise */
+.swatches{display:flex;flex-wrap:wrap;gap:8px}.sw{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:6px 12px 6px 6px;transition:transform .15s}
+.sw i{width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--a) 0 50%,var(--g) 0)}.sw.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}.sw:hover{transform:translateY(-2px)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}.th{aspect-ratio:16/10;border-radius:12px;background:center/cover;position:relative;border:1px solid var(--line)}
+.th button{position:absolute;top:4px;right:4px;border:0;border-radius:50%;width:24px;height:24px;background:#000a;color:#fff}
+.tog{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}input[type=color]{height:42px;padding:3px!important}
+/* cave inside the shell */
+#cave{--fg:var(--text);--mut:var(--muted);--bd:var(--line);--ac:var(--accent);--g:#22a559;--y:#e9a91b;--r:#d9433b}
+#cave input,#cave select,#cave button{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+#cave input[type=range]{padding:0;border:0;background:none}
+#cave button.p,#cave button.on{background:var(--ac);color:var(--onaccent);border-color:var(--ac)}
+#cave .tabs button,#cave .tabs button.on{background:none;border:0;border-bottom:3px solid transparent;border-radius:0}#cave .tabs button.on{color:var(--ac);border-bottom-color:var(--ac)}
+#cave .sc{margin-top:0}#cave #scene{background:linear-gradient(var(--sky1),color-mix(in srgb,var(--sky1) 40%,#fff) 45%,var(--grass) 45%)}
+#cave .gd{background:color-mix(in srgb,var(--grass) 85%,#000)}
+#cave .slab{transition:transform .7s cubic-bezier(.3,.7,.2,1)}#cave .bc{transition:transform .15s}#cave .bc:hover{transform:translateX(3px)}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toastWrap" class="toast-wrap"></div>
+
+<script>
+"use strict";
+
+const mine=r=>!r.tpl||r.tpl===state.semester.templateId;
+const STORAGE_KEY = "bunksite_v1";
+const TODAY = new Date();
+const TODAY_ISO = isoDate(TODAY);
+
+const timeSets = {
+  "I": [
+    ["09:00","09:50"],["09:55","10:45"],["10:50","11:40"],["11:45","12:35"],["12:35","13:30"],["13:30","14:20"],["14:25","15:15"],["15:20","16:10"],["16:15","17:05"]
+  ],
+  "II-IV": [
+    ["09:00","09:50"],["09:50","10:40"],["10:50","11:40"],["11:40","12:30"],["12:30","13:20"],["13:20","14:10"],["14:10","15:00"],["15:10","16:00"],["16:00","16:50"]
+  ]
+};
+
+const templates = [
+  {
+    id:"srm-i-ece-a", label:"SRM Trichy — I ECE-A", years:"I", ref:"I year Time Table SEEE.pdf — page 1",
+    file:"timetables/I year Time Table SEEE.pdf",
+    subjects:{E:"Philosophy of Engineering",A:"Advanced Calculus and Complex Analysis",B:"Chemistry",C:"Electronic System and PCB Design",D:"Programming for Problem Solving",F:"Biology",G:"German"},
+    codes:{E:"21GNH101J",A:"21MAB102T",B:"21CYB101J",C:"21BTB102J",D:"21CSS101J",F:"21BTB103T",G:"21LEH104T"},
+    schedule:{1:[["E",1],["E",2],["B",3],["A",4],["F",8],["G",9]],2:[["C",1],["B",2],["A",3],["D",4],["A",8],["D",9]],3:[["B",1],["E",2],["D",3],["F",6],["C",8]],4:[["G",2],["A",4],["C",6],["G",7]],5:[["D",1],["A",2],["B",3],["C",4],["G",6],["G",7]]}
+  },
+  {
+    id:"srm-i-ece-b", label:"SRM Trichy — I ECE-B / EEE", years:"I", ref:"I year Time Table SEEE.pdf — page 2",
+    file:"timetables/I year Time Table SEEE.pdf",
+    subjects:{E:"Philosophy of Engineering",A:"Advanced Calculus and Complex Analysis",B:"Chemistry",F:"Electronic System and PCB Design",D:"Programming for Problem Solving",C:"Biology",G:"Electrical Circuits",H:"German"},
+    codes:{E:"21GNH101J",A:"21MAB102T",B:"21CYB101J",F:"21BTB102J",D:"21CSS101J",C:"21BTB103T",G:"21EEC101J",H:"21LEH104T"},
+    schedule:{1:[["E",6],["F",2],["B",8],["A",9]],2:[["C",6],["B",7],["A",8],["D",9]],3:[["B",7],["E",8],["D",9]],4:[["C",3],["A",4],["D",6],["H",8]],5:[["G",4],["H",6],["B",8],["A",9]]}
+  },
+  {
+    id:"srm-i-ece-ds", label:"SRM Trichy — I ECE-DS", years:"I", ref:"I year Time Table SEEE.pdf — page 3",
+    file:"timetables/I year Time Table SEEE.pdf",
+    subjects:{E:"Philosophy of Engineering",A:"Advanced Calculus and Complex Analysis",B:"Chemistry",C:"Electronic System and PCB Design",D:"Programming for Problem Solving",F:"Biology",G:"German"},
+    codes:{E:"21GNH101J",A:"21MAB102T",B:"21CYB101J",C:"21BTB102J",D:"21CSS101J",F:"21BTB103T",G:"21LEH104T"},
+    schedule:{1:[["F",1],["G",2],["E",6],["E",7],["B",8],["A",9]],2:[["C",6],["B",7],["A",8],["D",9]],3:[["D",1],["D",2],["D",3],["B",6],["E",7],["E",8],["D",9]],4:[["A",1],["D",2],["E",3],["F",4],["G",6],["G",7]],5:[["D",1],["A",2],["E",3],["B",4]]}
+  },
+  {
+    id:"srm-i-biotech-b", label:"SRM Trichy — I Biotech-B / Biomedical Engineering", years:"I", ref:"I year Time Table SEEE.pdf — page 4",
+    file:"timetables/I year Time Table SEEE.pdf",
+    subjects:{E:"Philosophy of Engineering",A:"Advanced Calculus and Complex Analysis",B:"Chemistry",C:"Cell Biology / Biology",D:"Programming for Problem Solving",F:"Biochemistry",G:"Biology: Human Physiology and Anatomy",H:"Japanese"},
+    codes:{E:"21GNH101J",A:"21MAB102T",B:"21CYB101J",C:"21BTC105T",D:"21CSS101J",F:"21BTC101T",G:"21BTB104T",H:"21LEH105T"},
+    schedule:{1:[["C",1],["H",2],["H",3],["F",4],["E",6],["A",7],["B",8],["D",9]],2:[["D",1],["C",2],["C",3],["F",4],["D",6],["B",8],["A",9]],3:[["A",6],["B",7],["D",8],["D",9]],4:[["A",1],["C",2],["G",3],["A",4],["H",6],["H",7]],5:[["F",1],["D",2],["D",3],["H",4],["F",8],["F",9]]}
+  },
+  {
+    id:"srm-ii-bme", label:"SRM Trichy — II BME", years:"II-IV", ref:"II BME.pdf", file:"timetables/II BME.pdf",
+    subjects:{A:"Transforms and Boundary Value Problems",B:"Biomedical Signals and Systems",C:"Electric and Electronic Circuits",D:"Digital Logic Design for Medical Systems",E:"Medical Physics",F:"Professional Ethics",G:"Universal Human Values-II",H:"Verbal Reasoning",I:"Social Engineering"},
+    codes:{A:"21MAB201T",B:"21BMC202T",C:"21BMC203J",D:"21BMC204J",E:"21PYS202T",F:"21LEM201T",G:"21LEM202T",H:"21PDM201L",I:"21PDH201T"},
+    schedule:{1:[["E",1],["C",2],["I",3],["I",4],["G",6],["G",7]],2:[["C",1],["E",2],["B",3],["A",4],["H",6],["H",7]],3:[["B",1],["D",2],["A",3],["A",4],["C",6],["A",7]],4:[["A",1],["E",2],["B",3],["D",4],["A",6],["C",7],["D",8],["D",9]],5:[["F",1],["A",2],["C",3],["D",4],["C",6],["D",7],["G",9]]}
+  },
+  {
+    id:"srm-ii-ece-ds-a", label:"SRM Trichy — II ECE-DS A", years:"II-IV", ref:"II ECE DS A.pdf", file:"timetables/II ECE DS A.pdf",
+    subjects:{A:"Transforms and Boundary Value Problems",B:"Solid State Devices",C:"Computer Organization and Architecture",D:"Digital Logic Design",E:"Electromagnetic Theory and Interference",F:"Professional Ethics",G:"Universal Human Values-II",H:"Verbal Reasoning",I:"Social Engineering",LAB:"Devices and Digital IC Laboratory"},
+    codes:{A:"21MAB201T",B:"21ECC201T",C:"21CSS201T",D:"21ECC203T",E:"21ECC205T",F:"21LEM201T",G:"21LEM202T",H:"21PDM201L",I:"21PDH209T",LAB:"21ECC211L"},
+    schedule:{1:[["E",1],["A",2],["I",3],["I",4],["G",6],["LAB",8]],2:[["C",1],["A",2],["E",3],["D",4],["G",6]],3:[["A",1],["B",2],["C",3],["D",4]],4:[["B",1],["C",2],["A",3],["F",4],["LAB",6]],5:[["D",1],["B",2],["E",3],["C",4]]}
+  },
+  {
+    id:"srm-ii-ece-ds-b", label:"SRM Trichy — II ECE-DS B", years:"II-IV", ref:"II ECE DS B.pdf", file:"timetables/II ECE DS B.pdf",
+    subjects:{A:"Transforms and Boundary Value Problems",B:"Solid State Devices",C:"Computer Organization and Architecture",D:"Digital Logic Design",E:"Electromagnetic Theory and Interference",F:"Professional Ethics",G:"Universal Human Values-II",H:"Verbal Reasoning",I:"Social Engineering",LAB:"Devices and Digital IC Laboratory"},
+    codes:{A:"21MAB201T",B:"21ECC201T",C:"21CSS201T",D:"21ECC203T",E:"21ECC205T",F:"21LEM201T",G:"21LEM202T",H:"21PDM201L",I:"21PDH209T",LAB:"21ECC211L"},
+    schedule:{1:[["D",6],["B",7],["C",8],["I",9]],2:[["C",6],["D",7],["E",8],["A",9]],3:[["I",6],["E",7],["A",8],["D",9]],4:[["A",6],["C",7],["B",8],["E",9]],5:[["F",6],["A",7],["B",8],["C",9]]}
+  },
+  {
+    id:"srm-iii-bme", label:"SRM Trichy — III BME", years:"II-IV", ref:"III BME.pdf", file:"timetables/III BME.pdf",
+    subjects:{A:"Probability and Statistics",B:"Microcontrollers and Its Applications in Medicine",C:"Biomedical Signal Processing",D:"Biometrics",E:"Modern wireless communication system",F:"Principles of Medical Imaging",G:"Analytical and Logical Thinking Skills",H:"Indian Art Form",I:"Community Connect"},
+    codes:{A:"21MAB301T",B:"21BMC302J",C:"21BMC301J",D:"21BME266T",E:"21ECO103T",F:"21BMC303T",G:"21PDM301L",H:"21LEM301T",I:"21GNP301L"},
+    schedule:{1:[["G",1],["E",6],["B",7],["F",8],["H",9]],2:[["C",6],["D",7],["A",8],["B",9]],3:[["C",6],["A",7],["F",8],["D",9]],4:[["A",6],["C",7],["E",8],["B",9]],5:[["F",6],["A",7],["D",8],["E",9]]}
+  },
+  {
+    id:"srm-iii-ece-a", label:"SRM Trichy — III ECE-A", years:"II-IV", ref:"III ECE A.pdf", file:"timetables/III ECE A.pdf",
+    subjects:{A:"Discrete Mathematics",B:"Microprocessor, Microcontroller, and Interfacing Techniques",C:"VLSI Design and Technology",D:"System and Network on Chip",E:"Machine learning for all",F:"Community Connect",G:"Analytical and logical thinking skills",H:"Indian Art Form",LAB:"VLSI Design / Microprocessor Laboratory"},
+    codes:{A:"21MAB302T",B:"21ECC301P",C:"21ECC303T",D:"21ECE468T",E:"21CSO355T",F:"21GNP301L",G:"21PDM301L",H:"21LEM301T",LAB:"21ECC311L"},
+    schedule:{1:[["E",1],["B",2],["B",3],["A",4],["G",6]],2:[["H",1],["D",2],["B",3],["B",4]],3:[["C",1],["A",2],["D",3],["F",4],["LAB",8]],4:[["A",1],["E",2],["C",3],["F",4]],5:[["D",1],["A",2],["E",3],["C",4],["LAB",6]]}
+  },
+  {
+    id:"srm-iii-ece-b", label:"SRM Trichy — III ECE-B", years:"II-IV", ref:"III ECE B.pdf", file:"timetables/III ECE B.pdf",
+    subjects:{A:"Discrete Mathematics",B:"Microprocessor, Microcontroller, and Interfacing Techniques",C:"VLSI Design and Technology",D:"System and Network on Chip",E:"Machine learning for all",F:"Community Connect",G:"Analytical and logical thinking skills",H:"Indian Art Form",LAB:"VLSI Design / Microprocessor Laboratory"},
+    codes:{A:"21MAB302T",B:"21ECC301P",C:"21ECC303T",D:"21ECE468T",E:"21CSO355T",F:"21GNP301L",G:"21PDM301L",H:"21LEM301T",LAB:"21ECC311L"},
+    schedule:{1:[["E",6],["B",7],["A",8],["D",9]],2:[["F",6],["B",7],["D",8],["C",9]],3:[["B",6],["B",7],["A",8],["H",9]],4:[["A",6],["C",7],["E",8],["F",9]],5:[["C",6],["A",7],["E",8],["D",9]]}
+  },
+  {
+    id:"srm-iii-ece-ds", label:"SRM Trichy — III ECE-DS", years:"II-IV", ref:"III ECE DS.pdf", file:"timetables/III ECE DS.pdf",
+    subjects:{A:"Discrete Mathematics",B:"Microprocessor, Microcontroller, and Interfacing Techniques",C:"VLSI Design and Technology",D:"Machine learning for all",E:"Database Design and Management",F:"Community Connect",G:"Analytical and logical thinking skills",H:"Indian Art Form",LAB:"VLSI Design / Microprocessor Laboratory"},
+    codes:{A:"21MAB302T",B:"21ECC301P",C:"21ECC303T",D:"21CSO355T",E:"21ECE371T",F:"21GNP301L",G:"21PDM301L",H:"21LEM301T",LAB:"21ECC311L"},
+    schedule:{1:[["E",1],["B",2],["C",3],["A",4]],2:[["C",1],["B",2],["D",3],["F",4],["LAB",6]],3:[["H",1],["B",2],["A",3],["C",4]],4:[["A",1],["D",2],["E",3],["F",4]],5:[["D",1],["A",2],["E",3],["B",4],["LAB",8]]}
+  },
+  {
+    id:"srm-iv-ece-a", label:"SRM Trichy — IV ECE-A", years:"II-IV", ref:"IV ECE A.pdf", file:"timetables/IV ECE A.pdf",
+    subjects:{A:"Behavioural Psychology",B:"Wireless Communication and Antenna Systems",C:"Computer Communication and Network Security",D:"Semiconductor Memory Design",E:"Scripting Language for Electronic Design Automation",F:"Machine learning for all",LAB:"Computer Communication and Network Security Laboratory"},
+    codes:{A:"21GNH401T",B:"21ECC401T",C:"21ECC402P",D:"21ECE461T",E:"21ECE463T",F:"21CSO355T",LAB:"21ECC402P"},
+    schedule:{1:[["C",1],["A",3],["D",4]],2:[["C",1],["D",2],["B",3],["F",4]],3:[["B",1],["E",3],["F",4]],4:[["F",1],["A",2],["E",3],["B",4]],5:[["C",1],["A",2],["D",3],["E",4]]}
+  },
+  {
+    id:"srm-iv-ece-b", label:"SRM Trichy — IV ECE-B", years:"II-IV", ref:"IV ECE B.pdf", file:"timetables/IV ECE B.pdf",
+    subjects:{A:"Behavioural Psychology",B:"Wireless Communication and Antenna Systems",C:"Computer Communication and Network Security",D:"Semiconductor Memory Design",E:"Scripting Language for Electronic Design Automation",F:"Machine learning for all",LAB:"Computer Communication and Network Security Laboratory"},
+    codes:{A:"21GNH401T",B:"21ECC401T",C:"21ECC402P",D:"21ECE461T",E:"21ECE463T",F:"21CSO355T",LAB:"21ECC402P"},
+    schedule:{1:[["C",1],["A",2],["E",3],["F",4]],2:[["C",1],["E",2],["F",3],["B",4]],3:[["C",1],["D",2],["A",3],["B",4]],4:[["D",1],["B",2],["LAB",3],["A",4]],5:[["E",1],["D",2],["F",3]]}
+  }
+];
+
+const CUSTOM_DEFAULTS={accent:'#2f6bff',gold:'#f4b41a',sky:'#a9cdee',grass:'#86b874',radius:18,overlay:.8,anim:true,brand:'bunksite',photos:[],useArt:true,showHero:true,showRooms:true};
+const defaultState = {custom:clone(CUSTOM_DEFAULTS),
+  version:1, account:null, theme:"system", tab:"dashboard",
+  selectedDate:TODAY_ISO, monthCursor:TODAY_ISO.slice(0,7),
+  profile:{
+    displayName:"", name:"", registerNumber:"", className:"", section:"",
+    university:"SRM Institute of Science and Technology",
+    college:"SRM Institute of Science and Technology — Tiruchirappalli Campus",
+    netId:"", phone:"", dob:""
+  },
+  semester:{start:"2026-08-29",end:"2026-12-03",templateId:"srm-iii-ece-a"},
+  holidays:[],
+  attendance:[],
+  preferences:{language:"English",warnings:true,biometric:false},
+  portal:{url:"",netId:"",passwordSessionOnly:""},
+  avatar:"",
+};
+
+let state = loadState();
+state.custom = Object.assign(clone(CUSTOM_DEFAULTS), state.custom||{});
+let editingProfile = false;
+
+function clone(x){ return JSON.parse(JSON.stringify(x)); }
+function loadState(){ try{ const x=JSON.parse(localStorage.getItem(STORAGE_KEY)); return x ? x : clone(defaultState); }catch(e){ return clone(defaultState); } }
+function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){ toast('Storage is full. Remove some photos in Customise.'); } }
+function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
+function toast(msg){ const w=document.getElementById("toastWrap"); const el=document.createElement("div"); el.className="toast"; el.textContent=msg; w.appendChild(el); setTimeout(()=>el.remove(),3200); }
+function isoDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseDate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function fmtDate(s){ return parseDate(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"}); }
+function dayNum(s){ return parseDate(s).getDay(); } // 0 Sun
+function getTemplate(){ return templates.find(t=>t.id===state.semester.templateId) || templates[0]; }
+function statusLabel(st){ return st==="present"?"Present":st==="absent"?"Absent":st==="od"?"OD":st==="medical"?"Medical":"Unmarked"; }
+function attendanceMap(){ const m=new Map(); state.attendance.filter(mine).forEach(r=>m.set(`${r.date}|${r.subjectId}|${r.period}`,r.status)); return m; }
+function getStatus(date,subjectId,period){ return attendanceMap().get(`${date}|${subjectId}|${period}`)||null; }
+function setStatus(date,subjectId,period,status){
+  const key=`${date}|${subjectId}|${period}`;
+  state.attendance=state.attendance.filter(r=>`${r.date}|${r.subjectId}|${r.period}`!==key);
+  if(status) state.attendance.push({date,subjectId,period,status,tpl:state.semester.templateId});
+  saveState(); render();
+}
+function inSemester(s){ return s>=state.semester.start && s<=state.semester.end; }
+function isHoliday(s){ return state.holidays.includes(s); }
+function scheduledOn(date){
+  if(!inSemester(date) || isHoliday(date)) return [];
+  const t=getTemplate(), weekday=dayNum(date);
+  const entries=t.schedule[weekday]||[];
+  return entries.map(([slot,period])=>({slot,period,subjectId:slot,subjectName:t.subjects[slot]||slot,code:t.codes[slot]||"",time:timeSets[t.years][period-1]}));
+}
+function dateRange(a,b){
+  const out=[]; let d=parseDate(a); const end=parseDate(b);
+  while(d<=end){ out.push(isoDate(d)); d.setDate(d.getDate()+1); }
+  return out;
+}
+function allScheduled(){
+  const out=[]; for(const d of dateRange(state.semester.start,state.semester.end)){ for(const c of scheduledOn(d)) out.push({...c,date:d}); }
+  return out;
+}
+function recordsForSubject(subjectId){
+  return state.attendance.filter(r=>r.subjectId===subjectId&&mine(r));
+}
+function eligibleStats(subjectId, upToDate=null){
+  const rec=recordsForSubject(subjectId).filter(r=>!upToDate || r.date<=upToDate);
+  let attended=0, held=0, od=0, medical=0, absent=0, unmarkedPast=0;
+  rec.forEach(r=>{
+    if(r.status==="present"){attended++;held++}
+    else if(r.status==="absent"){held++;absent++}
+    else if(r.status==="od"){od++}
+    else if(r.status==="medical"){medical++}
+  });
+  // Count only classes that were actually marked. Unmarked past classes are reported separately.
+  return {attended,held,od,medical,absent,unmarkedPast};
+}
+function targetRequired(attended,eligibleTotal,target){
+  return Math.max(0,Math.ceil(target*eligibleTotal-attended-1e-9));
+}
+function subjectProjection(subjectId){
+  const t=getTemplate();
+  const rec=eligibleStats(subjectId,TODAY_ISO);
+  const future=allScheduled().filter(x=>x.date>TODAY_ISO && x.subjectId===subjectId).length;
+  const maxPct=(rec.held+future)>0 ? ((rec.attended+future)/(rec.held+future))*100 : 100;
+  const currentPct=rec.held>0 ? rec.attended/rec.held*100 : 0;
+  return {rec,future,maxPct,currentPct,name:t.subjects[subjectId],code:t.codes[subjectId]||""};
+}
+function overallStats(){
+  const all=allScheduled();
+  const map=attendanceMap();
+  let planned=all.length, attended=0, currentHeld=0, currentAttended=0, currentEligible=0, future=0, od=0, medical=0, absent=0, unmarkedPast=0;
+  all.forEach(x=>{
+    const st=map.get(`${x.date}|${x.subjectId}|${x.period}`);
+    if(x.date>TODAY_ISO) future++;
+    if(st==="present"){ attended++; if(x.date<=TODAY_ISO){currentHeld++;currentAttended++;} }
+    else if(st==="absent"){ if(x.date<=TODAY_ISO){currentHeld++;} absent++; }
+    else if(st==="od"){ od++; }
+    else if(st==="medical"){ medical++; }
+    else if(x.date<=TODAY_ISO){unmarkedPast++; }
+    if(st==="present"||st==="absent"){ if(x.date<=TODAY_ISO) currentEligible++; }
+  });
+  const eligiblePlanned=planned-od-medical;
+  const plannedPct=eligiblePlanned>0 ? attended/eligiblePlanned*100 : 0;
+  const currentPct=currentEligible>0 ? currentAttended/currentEligible*100 : 0;
+  const req90=targetRequired(attended,eligiblePlanned,0.90);
+  const req75=targetRequired(attended,eligiblePlanned,0.75);
+  const maxFinal=(currentEligible+future)>0 ? (currentAttended+future)/(currentEligible+future)*100 : 100;
+  const plannedLeft=Math.max(0, future);
+  return {planned,eligiblePlanned,attended,currentHeld,currentAttended,currentEligible,currentPct,plannedPct,future,plannedLeft,od,medical,absent,unmarkedPast,req90,req75,maxFinal};
+}
+function holidayStats(){
+  const hs=state.holidays.filter(inSemester).sort();
+  return {total:hs.length,left:hs.filter(x=>x>TODAY_ISO).length};
+}
+function statusForPct(pct,maxPct=100){
+  if(maxPct<75) return ["bad","Irreversible Detention"];
+  if(pct<75) return ["bad","Below 75%"];
+  if(pct<80) return ["warn","Approaching warning"];
+  return ["good","Healthy"];
+}
+function initials(name){ return (name||"BS").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"BS"; }
+
+async function hashPassword(password,salt){
+  const data=new TextEncoder().encode(password+":"+salt);
+  const buf=await crypto.subtle.digest("SHA-256",data);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function randomSalt(){ return crypto.getRandomValues(new Uint32Array(4)).join("-"); }
+async function checkPassword(pw){
+  if(!state.account) return false;
+  return (await hashPassword(pw,state.account.salt))===state.account.hash;
+}
+
+function themeApply(){
+  const pref=state.theme;
+  const actual=pref==="system" ? (matchMedia("(prefers-color-scheme: light)").matches?"light":"dark") : pref;
+  document.documentElement.setAttribute("data-theme",actual); applyCustom();
+}
+matchMedia("(prefers-color-scheme: light)").addEventListener?.("change",themeApply);
+
+const authed=()=>sessionStorage.getItem('bs_auth')==='1', setAuth=v=>v?sessionStorage.setItem('bs_auth','1'):sessionStorage.removeItem('bs_auth');
+function render(){
+  themeApply();
+  if(!state.account||!authed()) renderAuth();
+  else renderApp();
+}
+
+function renderAuth(){
+  document.getElementById("app").innerHTML=`
+  <div class="login-shell">
+    <div class="login-card">
+      <section class="login-left">
+        <div class="logo">B</div>
+        <h1>${escapeHtml(state.custom.brand)}</h1>
+        <p>Attendance, timetable, leave planning, an AI study-sidekick and the SRM Trichy cave tracker with its 3D campus map, in one private workspace.</p>
+        <div class="kpi-row">
+          <span class="badge">75% detention engine</span>
+          <span class="badge">90% target planner</span>
+          <span class="badge">Tanglish-ready</span>
+          <span class="badge">3D cave map</span>
+          <span class="badge">Discord-style UI</span>
+        </div>
+        <div class="notice" style="margin-top:18px">
+          <strong>Fresh local account</strong><br>
+          This prototype stores the demo account in this browser. Do not enter a real college-portal password here; production should use secure server storage or an official SSO/API.
+        </div>
+      </section>
+      <section class="login-right">
+        <div class="mode-tabs">
+          <button class="btn primary" id="showRegister">Create account</button>
+          <button class="btn" id="showLogin">Log in</button>
+        </div>
+        <div id="authForm"></div>
+      </section>
+    </div>
+  </div>`;
+  document.getElementById("showRegister").onclick=()=>authForm(true);
+  document.getElementById("showLogin").onclick=()=>authForm(false);
+  authForm(!state.account);
+}
+function authForm(register){
+  const box=document.getElementById("authForm");
+  box.innerHTML=register?`
+    <h2 style="margin-top:0">Create your fresh account</h2>
+    <p class="mini">Your email is the unique account identifier. One account is allowed in this browser until it is deleted.</p>
+    <div class="form-grid">
+      <div class="field full"><label>Email address</label><input id="regEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input id="regPw" type="password" autocomplete="new-password" placeholder="Create a password"></div>
+      <div class="field"><label>Confirm password</label><input id="regPw2" type="password" autocomplete="new-password" placeholder="Repeat password"></div>
+    </div>
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="createBtn">Create fresh account</button><button class="btn ghost" id="demoBtn">Use demo data</button></div>
+    <div class="mini" style="margin-top:13px">Password is hashed with Web Crypto in this prototype. Email OTP delivery and server-side authentication require a production backend.</div>
+  `:`
+    <h2 style="margin-top:0">Welcome back</h2>
+    <div class="form-grid">
+      <div class="field full"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" value="${escapeHtml(state.account?.email||"")}"></div>
+      <div class="field full"><label>Password</label><input id="loginPw" type="password" autocomplete="current-password" placeholder="Password"></div>
+    </div>
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="loginBtn">Log in</button><button class="btn ghost" id="forgotBtn">Forgot password?</button></div>
+  `;
+  if(register){
+    document.getElementById("createBtn").onclick=async()=>{
+      const email=document.getElementById("regEmail").value.trim().toLowerCase();
+      const pw=document.getElementById("regPw").value;
+      const pw2=document.getElementById("regPw2").value;
+      if(!email || !pw) return toast("Enter an email and password.");
+      if(pw!==pw2) return toast("Passwords do not match.");
+      const salt=randomSalt();
+      state.account={email,salt,hash:await hashPassword(pw,salt)};
+      state.profile.displayName=email.split("@")[0];
+      state.profile.name="";
+      setAuth(1); saveState(); render();
+      toast("Fresh bunksite account created.");
+    };
+    document.getElementById("demoBtn").onclick=async()=>{
+      const email="demo@bunksite.local", pw="Bunksite123!";
+      const salt=randomSalt();
+      state.account={email,salt,hash:await hashPassword(pw,salt)};
+      state.profile={...state.profile,displayName:"Demo Student",name:"Demo Student",registerNumber:"DEMO-001",className:"III ECE",section:"A"};
+      setAuth(1); saveState(); render(); toast("Demo account created. You are signed in.");
+    };
+  }else{
+    document.getElementById("loginBtn").onclick=async()=>{
+      const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+      const pw=document.getElementById("loginPw").value;
+      if(email!==state.account.email) return toast("Email does not match this account.");
+      if(!(await checkPassword(pw))) return toast("Incorrect password.");
+      setAuth(1); state.tab="dashboard"; saveState(); render();
+    };
+    document.getElementById("forgotBtn").onclick=()=>forgotPasswordModal();
+  }
+}
+function freshAccount(){
+  localStorage.removeItem(STORAGE_KEY);
+  state=clone(defaultState); render(); toast("Fresh account ready.");
+}
+function forgotPasswordModal(){
+  openModal("Reset password with email OTP",`
+    <p class="mini">Prototype mode: a demo OTP is shown on screen. In production, this must be delivered to the account's verified email address.</p>
+    <div class="field"><label>Email</label><input id="otpEmail" type="email" value="${escapeHtml(state.account?.email||"")}"></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="sendOtp">Send demo OTP</button></div>
+    <div id="otpStep" class="hidden"></div>
+  `);
+  document.getElementById("sendOtp").onclick=()=>{
+    const otp=String(Math.floor(100000+Math.random()*900000));
+    document.getElementById("otpStep").classList.remove("hidden");
+    document.getElementById("otpStep").innerHTML=`
+      <div class="notice warn" style="margin-top:14px"><strong>Demo OTP:</strong> ${otp}</div>
+      <div class="field" style="margin-top:12px"><label>OTP</label><input id="otpInput"></div>
+      <div class="field" style="margin-top:12px"><label>New password</label><input id="newPw" type="password"></div>
+      <button class="btn primary" id="changePw" style="margin-top:12px">Change password</button>`;
+    document.getElementById("changePw").onclick=async()=>{
+      if(document.getElementById("otpInput").value!==otp) return toast("Wrong OTP.");
+      const np=document.getElementById("newPw").value;
+      if(np.length<6) return toast("Use at least 6 characters.");
+      state.account.salt=randomSalt(); state.account.hash=await hashPassword(np,state.account.salt); saveState(); closeModal(); toast("Password changed.");
+    };
+  };
+}
+
+function renderApp(){
+  const _log=document.getElementById('chatLog')?.innerHTML, _open=document.getElementById('chatPanel')?.classList.contains('open');
+  const p=state.profile, tab=state.tab;
+  document.getElementById("app").innerHTML=`
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">${escapeHtml((state.custom.brand[0]||"B").toUpperCase())}</div><div class="words"><h1>${escapeHtml(state.custom.brand)}</h1><small>SRM IST Trichy</small></div></div>
+      <div class="profile-mini">
+        <div class="avatar">${state.avatar?`<img src="${state.avatar}" alt="">`:escapeHtml(initials(p.displayName||p.name))}</div>
+        <div class="words" style="min-width:0"><strong>${escapeHtml(p.displayName||"Student")}</strong><div class="mini" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(state.account.email)}</div></div>
+      </div>
+      <nav class="nav">
+        ${navBtn("dashboard","⌂","Dashboard")}
+        ${navBtn("attendance","✓","Attendance")}
+        ${navBtn("rooms","◍","Cave · Rooms")}
+        ${navBtn("calendar","▦","Calendar")}
+        ${navBtn("analytics","◒","Analytics")}
+        ${navBtn("portal","↗","College Portal")}
+        ${navBtn("profile","◉","Profile")}
+        ${navBtn("customise","✦","Customise")}
+        ${navBtn("tutorial","?","Tutorial & FAQ")}
+      </nav>
+      <div class="side-footer">
+        <button class="btn" id="themeBtn">Theme: ${state.theme}</button>
+        <button class="btn ghost" id="freshBtn">Start fresh account</button>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2>${pageTitle(tab)}</h2>
+          <div class="mini">${fmtDate(TODAY_ISO)} · ${getTemplate().label}</div>
+        </div>
+        <div class="actions">
+          ${tab==="attendance"?`<button class="btn primary" id="markToday">Mark today's classes</button>`:""}
+          <button class="btn" id="quickProfile">Profile</button>
+        </div>
+      </div>
+      <div id="page"></div>
+    </main>
+  </div>
+  <button class="chat-fab" id="chatFab" title="Ask bunksite AI">✦</button>
+  <section class="chat" id="chatPanel">
+    <div class="chat-head"><div><strong>Bunksite AI</strong><div class="mini">Attendance-aware · ${escapeHtml(state.preferences.language)}</div></div><button class="btn small" id="closeChat">×</button></div>
+    <div class="chat-log" id="chatLog"><div class="msg bot">Hi ${escapeHtml(p.displayName||"there")} 👋 Ask me anything about your attendance, leave plans, 75% detention risk or 90% target. Tanglish is okay too.</div></div>
+    <div class="chat-input"><textarea id="chatInput" placeholder="Eg: If I take a 3-day sick leave starting tomorrow, will Chemistry go below 75%?"></textarea><button class="btn primary" id="chatSend">Send</button></div>
+  </section>
+  <div class="modal-back" id="modalBack"><div class="modal" id="modal"></div></div>
+  `;
+  document.getElementById("freshBtn").onclick=()=>openModal("Start a fresh account",`<p>This will delete the current local prototype account and all attendance data from this browser.</p><div class="row"><button class="btn danger" id="confirmFresh">Delete and start fresh</button><button class="btn" id="cancelFresh">Cancel</button></div>`);
+  document.getElementById("quickProfile").onclick=()=>{state.tab="profile";render()};
+  document.getElementById("themeBtn").onclick=()=>{
+    state.theme=state.theme==="system"?"dark":state.theme==="dark"?"light":"system";saveState();render();
+  };
+  document.getElementById("chatFab").onclick=()=>document.getElementById("chatPanel").classList.toggle("open");
+  document.getElementById("closeChat").onclick=()=>document.getElementById("chatPanel").classList.remove("open");
+  document.getElementById("chatSend").onclick=sendChat;
+  document.getElementById("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChat()}});
+  if(_log){document.getElementById('chatLog').innerHTML=_log;if(_open)document.getElementById('chatPanel').classList.add('open');}
+  renderPage();
+}
+function navBtn(id,icon,text){ return `<button class="${state.tab===id?"active":""}" data-tab="${id}"><span>${icon}</span> <span class="navtext">${text}</span></button>`; }
+function pageTitle(tab){ return ({dashboard:"Dashboard",attendance:"Attendance",calendar:"Calendar",analytics:"Analytics",portal:"College portal",profile:"Profile & settings",tutorial:"Tutorial & FAQ",rooms:"Cave tracker",customise:"Customise"})[tab]||"Bunksite"; }
+
+document.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-tab]");
+  if(btn){state.tab=btn.dataset.tab;saveState();render();}
+});
+
+function renderPage(){
+  const el=document.getElementById("page");
+  Cave.unmount();
+  if(!el) return;
+  if(lastTab!==state.tab){el.classList.add("pgin");lastTab=state.tab;}
+  if(state.tab==="dashboard") el.innerHTML=dashboardHtml();
+  if(state.tab==="attendance") el.innerHTML=attendanceHtml();
+  if(state.tab==="calendar") el.innerHTML=calendarHtml();
+  if(state.tab==="analytics") el.innerHTML=analyticsHtml();
+  if(state.tab==="portal") el.innerHTML=portalHtml();
+  if(state.tab==="profile") el.innerHTML=profileHtml();
+  if(state.tab==="tutorial") el.innerHTML=tutorialHtml();
+  if(state.tab==="customise") el.innerHTML=customiseHtml();
+  if(state.tab==="rooms"){ el.innerHTML=CAVE_HTML; Cave.mount(); }
+  wirePage(); wireExtras(); wireCustomise();
+}
+
+function dashboardHtml(){
+  const o=overallStats(), hs=holidayStats(), [cls,label]=statusForPct(o.currentPct,o.maxFinal), targetReq=o.req90;
+  return heroHtml(o)+`
+  <div class="grid stats">
+    <div class="card stat"><div class="label">Whole-semester planned</div><div class="value">${o.plannedPct.toFixed(1)}%</div><div class="sub">${o.attended}/${o.eligiblePlanned} eligible classes</div></div>
+    <div class="card stat"><div class="label">Attendance till today</div><div class="value">${o.currentPct.toFixed(1)}%</div><div class="sub">${o.currentAttended}/${o.currentEligible} marked eligible</div></div>
+    <div class="card stat"><div class="label">Classes left</div><div class="value">${o.plannedLeft}</div><div class="sub">after ${fmtDate(TODAY_ISO)}</div></div>
+    <div class="card stat"><div class="label">Holidays</div><div class="value">${hs.total}</div><div class="sub">${hs.left} left in semester</div></div>
+    <div class="card stat"><div class="label">Need for 90%</div><div class="value">${targetReq>o.plannedLeft?"—":targetReq}</div><div class="sub">${targetReq>o.plannedLeft?"Not reachable from current planned total":"additional classes"}</div></div>
+  </div>
+  <div class="grid main-grid" style="margin-top:14px">
+    <section class="card section">
+      <div class="split"><h3>Attendance health</h3><span class="badge ${cls}">${label}</span></div>
+      <div class="health"><strong>Current ${o.currentPct.toFixed(1)}%</strong><span class="mini">75% detention line · 90% goal</span></div>
+      <div class="progress"><div style="width:${Math.max(0,Math.min(100,o.currentPct))}%"></div></div>
+      <div class="kpi-row" style="margin-top:12px">
+        <div class="kpi">Max possible final: <strong>${o.maxFinal.toFixed(1)}%</strong></div>
+        <div class="kpi">Absences marked: <strong>${o.absent}</strong></div>
+        <div class="kpi">OD: <strong>${o.od}</strong></div>
+        <div class="kpi">Medical: <strong>${o.medical}</strong></div>
+      </div>
+      ${o.maxFinal<75?`<div class="notice bad" style="margin-top:14px"><strong>Irreversible Detention.</strong> Even if every remaining eligible class is attended, the current projection cannot reach 75%. Check the subject cards for the exact source of risk.</div>`:""}
+      ${o.unmarkedPast?`<div class="notice warn" style="margin-top:14px"><strong>${o.unmarkedPast} past class${o.unmarkedPast>1?"es":""} unmarked.</strong> Mark them as Present, Absent, OD or Medical to keep the current attendance percentage accurate.</div>`:""}
+    </section>
+    <section class="card section">
+      <div class="split"><h3>Semester plan</h3><button class="btn small" id="editSemester">Edit</button></div>
+      <div class="kpi-row">
+        <div class="kpi">Start: <strong>${fmtDate(state.semester.start)}</strong></div>
+        <div class="kpi">End: <strong>${fmtDate(state.semester.end)}</strong></div>
+        <div class="kpi">Template: <strong>${escapeHtml(getTemplate().label.replace("SRM Trichy — ",""))}</strong></div>
+      </div>
+      <div style="margin-top:14px" class="notice">Bunksite counts scheduled periods from the timetable. Holidays are removed from the schedule, and approved OD / Medical records are removed from the attendance denominator.</div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="todayAttendance">Mark today's attendance</button><button class="btn" id="goAnalytics">Open analytics</button></div>
+    </section>
+  </div>
+  <section class="card section" style="margin-top:14px">
+    <div class="split"><h3>Subject health</h3><span class="mini">75% minimum · warnings near the line</span></div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Subject</th><th>Current</th><th>Max final</th><th>More for 90%</th><th>Risk</th></tr></thead><tbody>
+      ${Object.keys(getTemplate().subjects).map(id=>{
+        const s=subjectProjection(id); const req=targetRequired(s.rec.attended,s.rec.held+s.future,.90); const st=statusForPct(s.currentPct,s.maxPct);
+        return `<tr><td><strong>${escapeHtml(s.name)}</strong><br><span class="mini">${escapeHtml(s.code)}</span></td><td>${s.rec.held?s.currentPct.toFixed(1):"—"}%</td><td>${s.maxPct.toFixed(1)}%</td><td>${req>s.future?"—":req}</td><td><span class="badge ${st[0]}">${st[1]}</span></td></tr>`;
+      }).join("")}
+      </tbody></table>
+    </div>
+  </section>`;
+}
+
+function attendanceHtml(){
+  const selected=state.selectedDate||TODAY_ISO, classes=scheduledOn(selected);
+  return `
+  <div class="grid two">
+    <section class="card section">
+      <div class="split"><h3>Daily attendance</h3><input id="selectedDate" type="date" value="${selected}" style="max-width:160px"></div>
+      <div class="mini" style="margin-bottom:10px">${classes.length?classes.length+" scheduled class(es)":"No timetable class on this date"}</div>
+      <div class="day-classes">
+      ${classes.length?classes.map(c=>{
+        const st=getStatus(selected,c.subjectId,c.period);
+        return `<div class="class-row">
+          <div><div class="subject">${escapeHtml(c.subjectName)}</div><div class="meta">${escapeHtml(c.code)} · P${c.period} · ${c.time?.join("–")||""}</div></div>
+          <div class="meta">Date<br><strong>${fmtDate(selected)}</strong></div>
+          <div class="status-buttons">
+            ${["present","absent","od","medical"].map(x=>`<button class="${st===x?"selected "+x:""}" data-mark="${x}" data-subject="${escapeHtml(c.subjectId)}" data-period="${c.period}">${statusLabel(x)}</button>`).join("")}
+          </div>
+          <button class="btn small" data-clear="${escapeHtml(c.subjectId)}" data-period="${c.period}">Clear</button>
+        </div>`;
+      }).join(""):`<div class="notice">No scheduled class for this date. Add a holiday or edit the timetable if your college schedule differs.</div>`}
+      </div>
+    </section>
+    <section class="card section">
+      <div class="split"><h3>How the math works</h3><span class="badge">Live</span></div>
+      <div class="notice"><strong>Current attendance</strong><br>Marked Present ÷ (Marked Present + Marked Absent) through the selected date.</div>
+      <div class="notice" style="margin-top:10px"><strong>Whole-semester planned</strong><br>Present ÷ (all scheduled classes − OD − Medical) for the semester.</div>
+      <div class="notice warn" style="margin-top:10px"><strong>OD / Medical</strong><br>These are excluded from the denominator immediately and the dashboard recalculates after you mark them.</div>
+    </section>
+  </div>
+  <section class="card section" style="margin-top:14px">
+    <div class="split"><h3>Subject attendance</h3><span class="mini">Tap a subject to jump into its calendar records.</span></div>
+    <div class="grid stats" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      ${Object.keys(getTemplate().subjects).map(id=>{
+        const s=subjectProjection(id); const c=s.rec.held?s.currentPct:0; const [cl,lb]=statusForPct(c,s.maxPct);
+        return `<div class="card section" style="box-shadow:none">
+          <div class="mini">${escapeHtml(s.code)}</div><strong>${escapeHtml(s.name)}</strong>
+          <div style="font-size:28px;font-weight:850;margin-top:4px">${s.rec.held?c.toFixed(1):"—"}%</div>
+          <div class="progress" style="margin-top:8px"><div style="width:${Math.max(0,Math.min(100,c))}%"></div></div>
+          <div style="margin-top:8px"><span class="badge ${cl}">${lb}</span></div>
+        </div>`;
+      }).join("")}
+    </div>
+  </section>`;
+}
+
+function calendarHtml(){
+  const [y,m]=state.monthCursor.split("-").map(Number);
+  const first=new Date(y,m-1,1), days=new Date(y,m,0).getDate(), start=first.getDay();
+  let cells="";
+  for(let i=0;i<start;i++) cells+=`<div></div>`;
+  for(let d=1;d<=days;d++){
+    const s=`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const cls=(s===TODAY_ISO?"today ":"")+(s===state.selectedDate?"selected":"");
+    const rec=state.attendance.filter(r=>r.date===s&&mine(r));
+    cells+=`<button class="cell ${cls}" data-day="${s}">
+      <span class="date">${d}</span>
+      <div class="dotrow">${rec.slice(0,8).map(r=>`<i class="dot ${r.status}"></i>`).join("")}</div>
+      <span class="mini">${scheduledOn(s).length} class${scheduledOn(s).length===1?"":"es"}</span>
+    </button>`;
+  }
+  return `
+  <section class="card section">
+    <div class="split"><h3>${first.toLocaleDateString(undefined,{month:"long",year:"numeric"})}</h3><div class="row"><button class="btn small" id="prevMonth">←</button><button class="btn small" id="todayMonth">Today</button><button class="btn small" id="nextMonth">→</button></div></div>
+    <div class="calendar">${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(x=>`<div class="head">${x}</div>`).join("")}${cells}</div>
+  </section>
+  <div class="grid two" style="margin-top:14px">
+    <section class="card section"><h3>Holidays</h3>
+      <div class="row"><input id="holidayDate" type="date" min="${state.semester.start}" max="${state.semester.end}"><button class="btn primary" id="addHoliday">Add holiday</button></div>
+      <div style="margin-top:12px">${state.holidays.filter(inSemester).sort().map(h=>`<div class="split" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>${fmtDate(h)}</span><button class="btn small" data-remove-holiday="${h}">Remove</button></div>`).join("")||`<div class="mini">No holidays added yet.</div>`}</div>
+    </section>
+    <section class="card section"><h3>Selected date</h3><div class="notice"><strong>${fmtDate(state.selectedDate)}</strong><br>${scheduledOn(state.selectedDate).length} scheduled class(es). Use the Attendance tab to mark them.</div><button class="btn primary" id="openSelectedAttendance" style="margin-top:12px">Open attendance</button></section>
+  </div>`;
+}
+
+function analyticsHtml(){
+  const all=allScheduled(); const map=attendanceMap(); const dates=dateRange(state.semester.start,state.semester.end).filter(d=>d<=TODAY_ISO);
+  const weekly=[]; for(let i=0;i<Math.max(1,Math.ceil(dates.length/7));i++){ let present=0,eligible=0; dates.slice(i*7,i*7+7).forEach(d=>scheduledOn(d).forEach(c=>{const st=map.get(`${d}|${c.subjectId}|${c.period}`);if(st==="present"){present++;eligible++}else if(st==="absent"){eligible++}})); weekly.push(eligible?present/eligible*100:0); }
+  return `
+  <div class="grid two">
+    <section class="card section"><h3>Attendance trend</h3><div class="chart">${weekly.slice(-20).map((v,i)=>`<div class="bar" style="height:${Math.max(3,v)}%"><span>${v.toFixed(0)}%</span></div>`).join("")}</div><div class="mini">Weekly marked attendance through today. Unmarked classes are not silently treated as absences.</div></section>
+    <section class="card section"><h3>Attendance health rules</h3>
+      <div class="notice good">≥ 80% · Healthy buffer</div>
+      <div class="notice warn" style="margin-top:9px">75–79.9% · Warning zone</div>
+      <div class="notice bad" style="margin-top:9px">&lt; 75% · Detention risk</div>
+      <div class="notice bad" style="margin-top:9px">Max final &lt; 75% · Irreversible Detention</div>
+      <div class="mini" style="margin-top:10px">The warning band is set to 75–79.9% in this prototype and can be changed in a production admin policy table.</div>
+    </section>
+  </div>
+  <section class="card section" style="margin-top:14px"><h3>90% planner</h3>
+    <div class="table-wrap"><table><thead><tr><th>Subject</th><th>Current</th><th>Future classes</th><th>Need to reach 90%</th><th>Possible?</th></tr></thead><tbody>
+    ${Object.keys(getTemplate().subjects).map(id=>{const s=subjectProjection(id), req=targetRequired(s.rec.attended,s.rec.held+s.future,.9), ok=req<=s.future; return `<tr><td>${escapeHtml(s.name)}</td><td>${s.rec.held?s.currentPct.toFixed(1):"—"}%</td><td>${s.future}</td><td>${ok?req:"Not reachable"}</td><td><span class="badge ${ok?"good":"bad"}">${ok?"Yes":"No"}</span></td></tr>`}).join("")}
+    </tbody></table></div>
+  </section>`;
+}
+
+function portalHtml(){
+  return `
+  <div class="grid two">
+    <section class="card section">
+      <h3>Official college portal</h3>
+      <div class="notice warn"><strong>Separate source.</strong> Portal data never overwrites Bunksite attendance. For production, use an official API, SSO or a college-approved integration; do not collect passwords by scraping arbitrary portals.</div>
+      <div class="field" style="margin-top:12px"><label>Portal URL</label><input id="portalUrl" value="${escapeHtml(state.portal.url||"")}" placeholder="https://portal.example.edu"></div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="savePortal">Save URL</button><button class="btn" id="openPortal">Open portal</button></div>
+      <div class="field" style="margin-top:14px"><label>Student net ID</label><input id="portalNetId" value="${escapeHtml(state.profile.netId||"")}"></div>
+      <div class="field" style="margin-top:12px"><label>Portal password (session-only in this prototype)</label><input id="portalPw" type="password" placeholder="Never stored locally"></div>
+      <div class="mini" style="margin-top:8px">For your actual college login, prefer pass-through SSO or a secure backend with encrypted secrets and no plaintext password display.</div>
+    </section>
+    <section class="card section">
+      <h3>Portal vs Bunksite</h3>
+      <div class="table-wrap"><table><thead><tr><th>Subject</th><th>Bunksite</th><th>Portal</th></tr></thead><tbody>
+      ${Object.keys(getTemplate().subjects).map(id=>{const s=subjectProjection(id);return `<tr><td>${escapeHtml(s.name)}</td><td>${s.rec.held?s.currentPct.toFixed(1):"—"}%</td><td><span class="badge">Not connected</span></td></tr>`}).join("")}
+      </tbody></table></div>
+    </section>
+  </div>`;
+}
+
+function profileHtml(){
+  const p=state.profile;
+  return `
+  <div class="grid two">
+    <section class="card section">
+      <div class="split"><h3>Profile</h3><button class="btn" id="editProfile">${editingProfile?"Cancel":"Edit profile"}</button></div>
+      <div class="row">
+        <div class="avatar" style="width:72px;height:72px;border-radius:20px">${state.avatar?`<img src="${state.avatar}" alt="">`:escapeHtml(initials(p.displayName||p.name))}</div>
+        <div><strong style="font-size:18px">${escapeHtml(p.displayName||"Student")}</strong><div class="mini">${escapeHtml(state.account.email)}</div></div>
+      </div>
+      <div class="form-grid" style="margin-top:16px">
+        ${profileField("Display name","displayName",p.displayName,"text")}
+        ${profileField("Full name","name",p.name,"text")}
+        ${profileField("Register number","registerNumber",p.registerNumber,"text")}
+        ${profileField("Class","className",p.className,"text")}
+        ${profileField("Section","section",p.section,"text")}
+        ${profileField("University","university",p.university,"text")}
+        ${profileField("College","college",p.college,"text")}
+        ${profileField("Student net ID","netId",p.netId,"text")}
+        ${profileField("Phone number","phone",p.phone,"tel")}
+        ${profileField("Date of birth","dob",p.dob,"date")}
+        <div class="field full"><label>Profile picture</label><input id="avatarUpload" type="file" accept="image/*" ${editingProfile?"":"disabled"}></div>
+      </div>
+      ${editingProfile?`<div class="row" style="margin-top:14px"><button class="btn primary" id="saveProfile">Save profile</button><button class="btn" id="searchCollege">Search university/college online</button></div>`:""}
+    </section>
+    <section class="card section">
+      <h3>Semester & timetable</h3>
+      <div class="form-grid">
+        <div class="field"><label>Semester start</label><input id="semStart" type="date" value="${state.semester.start}"></div>
+        <div class="field"><label>Semester end</label><input id="semEnd" type="date" value="${state.semester.end}"></div>
+        <div class="field full"><label>SRM / college timetable template</label><select id="templateSelect">${templates.map(t=>`<option value="${t.id}" ${t.id===state.semester.templateId?"selected":""}>${escapeHtml(t.label)}</option>`).join("")}</select></div>
+        <div class="field full"><label>Other college timetable</label><input id="customTt" type="file" accept=".pdf,image/*"></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="saveSemester">Save semester settings</button><button class="btn" id="viewTt">View selected timetable PDF</button></div>
+      <div class="notice" style="margin-top:14px">The uploaded SRM Trichy templates include I-year variants and II–IV-year ECE/BME variants. The original timetable PDFs are bundled in this prototype for reference. </div>
+    </section>
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <section class="card section">
+      <h3>Security</h3>
+      <div class="row">
+        <button class="btn primary" id="changePassword">Change website password</button>
+        <button class="btn" id="passkeyBtn">Check biometric/passkey support</button>
+      </div>
+      <div class="notice" style="margin-top:12px">Biometric login should use WebAuthn/passkeys on HTTPS. A static local file can only show support detection; production enrollment belongs on the server-backed app.</div>
+    </section>
+    <section class="card section">
+      <h3>Preferences</h3>
+      <div class="form-grid">
+        <div class="field"><label>Theme</label><select id="prefTheme"><option value="system" ${state.theme==="system"?"selected":""}>System</option><option value="light" ${state.theme==="light"?"selected":""}>Light</option><option value="dark" ${state.theme==="dark"?"selected":""}>Dark</option></select></div>
+        <div class="field"><label>Language</label><select id="prefLang">${["English","Tamil","Tanglish","Malayalam","Hindi"].map(x=>`<option ${state.preferences.language===x?"selected":""}>${x}</option>`).join("")}</select></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="savePrefs">Save preferences</button></div>
+    </section>
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <section class="card section">
+      <h3>Account</h3>
+      <div class="mini">One account is tied to the verified email in this prototype. Account deletion requires the website password.</div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="logout">Log out</button><button class="btn danger" id="deleteAccount">Delete account</button></div>
+    </section>
+    <section class="card section">
+      <h3>Admin review</h3>
+      <div class="notice">Suspicious activity can be reported for admin review. Production systems should use an audit log, abuse controls and human review.</div>
+      <button class="btn danger" id="reportActivity" style="margin-top:12px">Report suspicious activity</button>
+    </section>
+  </div>`;
+}
+function profileField(label,key,value,type){ return `<div class="field"><label>${label}</label><input data-profile="${key}" type="${type}" value="${escapeHtml(value||"")}" ${editingProfile?"":"disabled"}></div>`; }
+
+function tutorialHtml(){
+  return `
+  <div class="grid two">
+    <section class="card section"><h3>Quick tutorial</h3>
+      <div class="notice"><strong>1. Choose your timetable.</strong><br>Use the SRM Trichy template if it matches your class. Other colleges can use a custom timetable workflow.</div>
+      <div class="notice" style="margin-top:10px"><strong>2. Mark every class.</strong><br>Present, Absent, OD and Medical are separate statuses. Unmarked past classes stay visible so the math is not silently guessed.</div>
+      <div class="notice" style="margin-top:10px"><strong>3. Plan before you bunk.</strong><br>Use the AI button to ask how a leave will affect a subject before you decide.</div>
+      <div class="notice" style="margin-top:10px"><strong>4. Keep portal data separate.</strong><br>The college portal is only an official-source reference and does not overwrite your Bunksite record.</div>
+    </section>
+    <section class="card section"><h3>FAQ</h3>
+      <details open><summary>Does OD or Medical count as absence?</summary><p class="mini">Not in this prototype. They are excluded from the denominator immediately.</p></details>
+      <details><summary>What is Irreversible Detention?</summary><p class="mini">If current marked eligible attendance plus perfect attendance in all remaining eligible classes still cannot reach 75%, Bunksite shows the alert.</p></details>
+      <details><summary>Why isn't an unmarked past class counted as absent?</summary><p class="mini">Because the system cannot know whether you attended. It asks you to mark the real status instead of silently guessing.</p></details>
+      <details><summary>Can I delete the SRM timetable?</summary><p class="mini">Yes. Switch to a custom timetable or another template in Profile. Your choice is account-specific in this prototype.</p></details>
+      <details><summary>Can I use Tanglish?</summary><p class="mini">Yes. The assistant accepts simple Tanglish cues such as “naalaikku”, “leave”, “attendance evlo”, and “enna pandra”.</p></details>
+      <details><summary>Will the AI store my data?</summary><p class="mini">This local prototype runs the basic assistant in the browser. A production AI integration should send only the minimum signed-in student's data needed for the question, with explicit privacy controls.</p></details>
+    </section>
+  </div>`;
+}
+
+function wirePage(){
+  document.querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{state.selectedDate=b.dataset.day;state.tab="attendance";saveState();render();});
+  const sd=document.getElementById("selectedDate"); if(sd) sd.onchange=()=>{state.selectedDate=sd.value;saveState();render();}
+  document.querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>setStatus(state.selectedDate,b.dataset.subject,Number(b.dataset.period),b.dataset.mark));
+  document.querySelectorAll("[data-clear]").forEach(b=>b.onclick=()=>setStatus(state.selectedDate,b.dataset.clear,Number(b.dataset.period),null));
+  document.querySelectorAll("[data-remove-holiday]").forEach(b=>b.onclick=()=>{state.holidays=state.holidays.filter(x=>x!==b.dataset.removeHoliday);saveState();render();});
+  const ph=document.getElementById("addHoliday"); if(ph) ph.onclick=()=>{const d=document.getElementById("holidayDate").value;if(d){if(!state.holidays.includes(d))state.holidays.push(d);saveState();render();}};
+  const prev=document.getElementById("prevMonth"); if(prev) prev.onclick=()=>changeMonth(-1);
+  const next=document.getElementById("nextMonth"); if(next) next.onclick=()=>changeMonth(1);
+  const tm=document.getElementById("todayMonth"); if(tm) tm.onclick=()=>{state.monthCursor=TODAY_ISO.slice(0,7);state.selectedDate=TODAY_ISO;saveState();render();};
+  const osa=document.getElementById("openSelectedAttendance"); if(osa) osa.onclick=()=>{state.tab="attendance";saveState();render();};
+  const todayBtn=document.getElementById("todayAttendance"); if(todayBtn) todayBtn.onclick=()=>{state.tab="attendance";state.selectedDate=TODAY_ISO;saveState();render();};
+  const goA=document.getElementById("goAnalytics"); if(goA) goA.onclick=()=>{state.tab="analytics";saveState();render();};
+  const editS=document.getElementById("editSemester"); if(editS) editS.onclick=()=>{state.tab="profile";saveState();render();};
+  const markT=document.getElementById("markToday"); if(markT) markT.onclick=()=>{state.selectedDate=TODAY_ISO;saveState();render();};
+  const ep=document.getElementById("editProfile"); if(ep) ep.onclick=()=>guardEditProfile();
+  const sp=document.getElementById("saveProfile"); if(sp) sp.onclick=()=>saveProfile();
+  const av=document.getElementById("avatarUpload"); if(av) av.onchange=e=>{const f=e.target.files[0];if(f){const fr=new FileReader();fr.onload=()=>{state.avatar=fr.result;saveState();render();};fr.readAsDataURL(f)}};
+  const sc=document.getElementById("searchCollege"); if(sc) sc.onclick=()=>{const q=(document.querySelector('[data-profile="college"]')?.value||"college") + " " + (document.querySelector('[data-profile="university"]')?.value||"university");window.open("https://www.google.com/search?q="+encodeURIComponent(q),"bunksite_search")};
+  const saveSem=document.getElementById("saveSemester"); if(saveSem) saveSem.onclick=()=>{state.semester.start=document.getElementById("semStart").value;state.semester.end=document.getElementById("semEnd").value;state.semester.templateId=document.getElementById("templateSelect").value;saveState();render();toast("Semester and timetable updated.")};
+  const viewTt=document.getElementById("viewTt"); if(viewTt) viewTt.onclick=()=>window.open(getTemplate().file,"_blank");
+  const savePortal=document.getElementById("savePortal"); if(savePortal) savePortal.onclick=()=>{state.portal.url=document.getElementById("portalUrl").value.trim();state.portal.netId=document.getElementById("portalNetId").value.trim();saveState();toast("Portal reference saved.")};
+  const openP=document.getElementById("openPortal"); if(openP) openP.onclick=()=>{const u=state.portal.url.trim();if(!u)return toast("Add a portal URL first.");window.open(u,"bunksite_portal")};
+  const chP=document.getElementById("changePassword"); if(chP) chP.onclick=forgotPasswordModal;
+  const pk=document.getElementById("passkeyBtn"); if(pk) pk.onclick=async()=>{if(!window.PublicKeyCredential || !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable){return toast("Passkey/biometric support is not available in this browser/context.")}; const ok=await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();toast(ok?"Platform biometric/passkey support is available. Production enrollment needs HTTPS + backend.":"No platform authenticator reported.");};
+  const st=document.getElementById("savePrefs"); if(st) st.onclick=()=>{state.theme=document.getElementById("prefTheme").value;state.preferences.language=document.getElementById("prefLang").value;saveState();render();};
+  const lo=document.getElementById("logout"); if(lo) lo.onclick=()=>{setAuth(0);state.tab="dashboard";saveState();render();};
+  const del=document.getElementById("deleteAccount"); if(del) del.onclick=deleteAccount;
+  const report=document.getElementById("reportActivity"); if(report) report.onclick=()=>openModal("Report suspicious activity",`<div class="field"><label>Reason</label><textarea id="reportReason" rows="5" placeholder="Describe what you want an admin to review."></textarea></div><button class="btn danger" id="sendReport" style="margin-top:12px">Submit report</button>`);
+  const freshConfirm=document.getElementById("confirmFresh"); if(freshConfirm) freshConfirm.onclick=()=>{closeModal();freshAccount()};
+  const cancelFresh=document.getElementById("cancelFresh"); if(cancelFresh) cancelFresh.onclick=closeModal;
+  const submitReport=document.getElementById("sendReport"); if(submitReport) submitReport.onclick=()=>{const r=document.getElementById("reportReason").value.trim();closeModal();toast(r?"Report submitted to the local demo queue. Production needs an admin backend.":"Enter a reason first.");};
+}
+
+function changeMonth(delta){
+  const [y,m]=state.monthCursor.split("-").map(Number); const d=new Date(y,m-1+delta,1); state.monthCursor=isoDate(d).slice(0,7);saveState();render();
+}
+async function guardEditProfile(){
+  openModal("Confirm your password",`<div class="field"><label>Website password</label><input id="editPw" type="password"></div><button class="btn primary" id="confirmEdit" style="margin-top:12px">Unlock profile editing</button>`);
+  document.getElementById("confirmEdit").onclick=async()=>{if(await checkPassword(document.getElementById("editPw").value)){closeModal();editingProfile=true;render()}else toast("Incorrect password.")};
+}
+function saveProfile(){
+  document.querySelectorAll("[data-profile]").forEach(i=>state.profile[i.dataset.profile]=i.value);
+  state.semester.start=document.getElementById("semStart").value;state.semester.end=document.getElementById("semEnd").value;state.semester.templateId=document.getElementById("templateSelect").value;
+  saveState();editingProfile=false;render();toast("Profile saved.");
+}
+async function deleteAccount(){
+  openModal("Delete account",`<p>This permanently clears the prototype account from this browser.</p><div class="field"><label>Enter website password</label><input id="delPw" type="password"></div><div class="row" style="margin-top:12px"><button class="btn danger" id="confirmDel">Delete permanently</button></div>`);
+  document.getElementById("confirmDel").onclick=async()=>{if(await checkPassword(document.getElementById("delPw").value)){localStorage.removeItem(STORAGE_KEY);state=clone(defaultState);closeModal();render()}else toast("Incorrect password.")};
+}
+
+function openModal(title,body){
+  document.getElementById("modal").innerHTML=`<div class="split"><h3 style="margin:0">${title}</h3><button class="btn small" onclick="closeModal()">×</button></div><div style="margin-top:14px">${body}</div>`;
+  document.getElementById("modalBack").classList.add("open");
+}
+function closeModal(){document.getElementById("modalBack")?.classList.remove("open")}
+
+function appendChat(text,user=false){
+  const log=document.getElementById("chatLog"); const div=document.createElement("div"); div.className="msg "+(user?"user":"bot"); div.innerHTML=text; log.appendChild(div); log.scrollTop=log.scrollHeight;
+}
+function detectSubject(q){
+  const t=getTemplate(), low=q.toLowerCase();
+  return Object.keys(t.subjects).find(id=>low.includes(t.subjects[id].toLowerCase())) ||
+         Object.keys(t.subjects).find(id=>low.includes((t.codes[id]||"").toLowerCase())) || null;
+}
+function nextNDates(start,n){
+  const out=[]; let d=parseDate(start); for(let i=0;i<n;i++){out.push(isoDate(d));d.setDate(d.getDate()+1)} return out;
+}
+function aiReply(q){
+  const low=q.toLowerCase();
+  const o=overallStats(), t=getTemplate();
+  const sub=detectSubject(low);
+  let days=0; const md=low.match(/(\d+)\s*[- ]?day/); if(md) days=Number(md[1]);
+  if(!days && (low.includes("tomorrow")||low.includes("naalaikku")||low.includes("nalai"))) days=1;
+  const leaveLike=/leave|sick|medical|\bod\b|absence|bunk|skip|vacation|leave\s+edutha|leave\s+potta/i.test(q);
+  if(sub && days && leaveLike){
+    const subjectName=t.subjects[sub], s=subjectProjection(sub);
+    const start=low.includes("tomorrow")||low.includes("naalaikku")||low.includes("nalai") ? (()=>{const d=parseDate(TODAY_ISO);d.setDate(d.getDate()+1);return isoDate(d)})() : TODAY_ISO;
+    const dates=nextNDates(start,days);
+    const leaveClasses=dates.flatMap(d=>scheduledOn(d).filter(c=>c.subjectId===sub));
+    const current=s.currentPct;
+    const ordinaryAbsentFinal=(s.rec.held+ s.future)>0 ? (s.rec.attended/(s.rec.held+s.future))*100 : 100;
+    const medFinal=current;
+    return `<strong>${escapeHtml(subjectName)}</strong><br><br>For ${days} day(s) from <strong>${fmtDate(start)}</strong>, I found <strong>${leaveClasses.length}</strong> scheduled class(es) for this subject.<br><br>If the leave is recorded as approved <strong>Medical</strong> or <strong>OD</strong>, those classes are excluded from the denominator, so the subject stays around <strong>${medFinal.toFixed(1)}%</strong> based on the current record.<br><br>If you simply mark those classes <strong>Absent</strong>, the projected planned figure could fall to about <strong>${ordinaryAbsentFinal.toFixed(1)}%</strong>.<br><br>${ordinaryAbsentFinal<75?"⚠️ That would be below the 75% line.":"You stay above the 75% line in this simplified projection."} Use the Attendance tab to apply the actual status.`;
+  }
+  if(/room|cave|hideout|study spot|free class/i.test(low)){ const f=Cave.free(3); return f.length?`Free right now: ${f.map(x=>`<strong>${escapeHtml(x.id)}</strong> (${x.ac?'AC':'Non-AC'}, ${x.txt})`).join(', ')}. Open <em>Cave · Rooms</em> for the 3D map.`:'No free rooms at the moment. Try the Cave tab with a later time.'; }
+  if(/90|ninety|target/i.test(low)){
+    if(o.req90>o.plannedLeft) return `Your current planned record needs <strong>${o.req90}</strong> additional attended classes to reach 90%, but only <strong>${o.plannedLeft}</strong> planned classes remain. That target is not currently reachable without denominator-reducing approved leave.`;
+    return `You currently have <strong>${o.attended}</strong> attended out of <strong>${o.eligiblePlanned}</strong> planned eligible classes. Based on the current plan, you need <strong>${o.req90}</strong> more attended classes to reach 90%.`;
+  }
+  if(/75|detention|detain|warning|risk/i.test(low)){
+    if(o.maxFinal<75) return `⚠️ <strong>Irreversible Detention</strong> at the current record: even attending every remaining eligible class gives about <strong>${o.maxFinal.toFixed(1)}%</strong>. Check the subject-level cards to see which subject(s) are driving the risk.`;
+    return `Your current attendance till today is <strong>${o.currentPct.toFixed(1)}%</strong>. The current maximum possible final is <strong>${o.maxFinal.toFixed(1)}%</strong>. The 75% detention line is not mathematically impossible yet.`;
+  }
+  if(/attendance|evlo|percentage|percent|enna pandra/i.test(low)){
+    return `Current summary: <strong>${o.currentPct.toFixed(1)}%</strong> till today, <strong>${o.plannedPct.toFixed(1)}%</strong> across the full planned semester, <strong>${o.plannedLeft}</strong> scheduled classes left, and <strong>${holidayStats().left}</strong> holidays left. Ask me a subject name + leave duration for a personalized projection.`;
+  }
+  if(/timetable|class|today|schedule/i.test(low)){
+    const cs=scheduledOn(TODAY_ISO); return `Today I see <strong>${cs.length}</strong> scheduled class(es): ${cs.map(c=>`${escapeHtml(c.subjectName)} (P${c.period})`).join(", ")||"none"}. You can mark them in Attendance.`;
+  }
+  return `I can analyze your Bunksite data. Try: <br><br>• “If I take a 3-day sick leave starting tomorrow, will Chemistry go below 75%?”<br>• “How many classes do I need for 90% in Physics?”<br>• “Attendance evlo irukku?”<br>• “Naalaikku enna classes?”`;
+}
+function sendChat(){
+  const input=document.getElementById("chatInput"); const q=input.value.trim(); if(!q)return;
+  appendChat(escapeHtml(q).replace(/\n/g,"<br>"),true); input.value="";
+  setTimeout(()=>appendChat(aiReply(q)),180);
+}
+
+const CAVE_HTML="<div id=\"cave\">\n<div class=\"card sc\"><div class=\"ttl\">Where do you want to study?</div><input id=\"q\" placeholder=\"e.g. AC room on the ground floor for my team for the next 2 hours\"><div class=\"chips\"><button class=\"chip\" data-t=\"AC room\">\u2744\ufe0f AC</button><button class=\"chip\" data-t=\"non-AC room\">Non-AC</button><button class=\"chip\" data-t=\"ground floor\">Ground floor</button><button class=\"chip\" data-t=\"on 3rd floor\">3rd floor</button><button class=\"chip\" data-t=\"for 1 hour\">1 hour</button><button class=\"chip\" data-t=\"for 2 hours\">2 hours</button></div><button class=\"p big\" id=\"go\">SEARCH ROOMS</button><div id=\"out\"></div></div>\n<div class=\"card row\"><select id=\"day\"></select><input type=\"time\" id=\"tm\"><button id=\"now\">Now (live)</button><span id=\"clk\" style=\"color:var(--mut)\"></span></div>\n<div class=\"tabs\"><button id=\"v1\" class=\"on\">Floor grid</button><button id=\"v2\">3D map</button></div><div class=\"leg\" style=\"margin:8px 0 10px\"><span><i class=\"dot g\"></i>Free \u22651h</span><span><i class=\"dot y\"></i>Free &lt;1h</span><span><i class=\"dot r\"></i>Occupied</span></div>\n<div id=\"grid\"></div>\n<div id=\"map\" hidden><div class=\"row\" id=\"fb\" style=\"margin-bottom:6px\"></div><div class=\"s\" id=\"fi\" style=\"margin:0 0 8px\"></div><div class=\"card\"><div class=\"row\">Rotate <input type=\"range\" id=\"rot\" min=\"-180\" max=\"180\" value=\"-25\" style=\"flex:1\"> Tilt <input type=\"range\" id=\"til\" min=\"35\" max=\"75\" value=\"62\" style=\"flex:1\"> Zoom <input type=\"range\" id=\"zm\" min=\"60\" max=\"300\" value=\"100\" style=\"flex:1\"> <small style=\"color:var(--mut)\">or drag the scene</small></div><div id=\"scene\"><div id=\"cap\">Illustrative campus model \u00b7 drag = rotate/pan \u00b7 scroll or slider = zoom</div><div id=\"bld\"></div></div></div></div>\n<div class=\"card\" id=\"det\" hidden></div>\n<p class=\"s\">Notes: lunch (P5) counts as free; timetable clashes count as occupied; Chemistry Lab has no floor in the source, so it sits in an annex. Outside 9:00\u20135:00 and on weekends every room is free.</p>\n</div>";
+const Cave=(()=>{
+
+const S=[540,590,650,700,750,800,850,910,960],E=[590,640,700,750,800,850,900,960,1010],DN=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const RAW=[["IST 20",0,0,"........./XXXX.XXXX/XXXX...../........./.....XXXX"],["IST 21",0,0,"........./XXXX.XXXX/XXXX...../........./.....XXXX"],
+["IST 107",1,1,"..XX.XXXX/XX...XX../........./.....XXXX/.......XX"],["IST 108",1,1,"XX......./XX...XX../.X.....XX/XXXX...../X....XXXX"],["TB-106",1,1,"........./.....XXXX/.....XX../..XX...../X........"],
+["IST 201",2,1,"........./..XX...../........./XX.....XX/........."],["IST 211",2,1,".....XXXX/.....XXXX/.....XXXX/.....XXXX/.....XXXX"],["IST 225",2,1,"X.XX...../XXXX...../X.XX...../XXXX...../XXXX....."],["IST 227",2,1,"XXXX...../XXXX...../XXXX...../XX.X...../XXX......"],
+["IST 309",3,1,"XXXX.XXXX/XX......./.......XX/XX...XXXX/.....XX.."],
+["IST 401",4,1,"........./........./X......../XX......./........."],["IST 411",4,1,".....XXXX/.....XXXX/.....XXXX/.....XXXX/.....XXXX"],["IST 416",4,1,"XXXX...../XXXX...../XXXX...../XXXX...../XXXX....."],
+["IST 502",5,1,".....XXXX/.....XXXX/......XXX/...X.XXXX/........."],["IST 510",5,1,"........./........./XXXX...../.X.X.XX../........."],["IST 518",5,1,"XXXX.XXXX/XXXX.XXXX/XXXX.XXXX/XXXX.XXXX/XXXX.XXXX"],["IST 519",5,1,"XXXX...../XXXX...../XXXX...../XXXX...../XXXX....."],["IST 520",5,1,"XX.X...../..X....../X......../...X...../........."],
+["IST 602",6,1,"XXXX.XXXX/XXXX.XXXX/XXX...XXX/XXXX.XXXX/XXXX.X.XX"],["IST 609",6,1,"X......../........./........./........./........."],["IST 617",6,1,"..XX...../........./.X..XX.../........./XX......."],["IST 618",6,1,"........./........./....XXX../........./........."],["IST 625",6,1,"XX...XX../XXX...X../X......XX/........./.....X..."],["IST 626",6,1,"........./........./........./..X....../XXXXXXXXX"],
+["IST 702",7,1,".....XXXX/......XXX/.....XXXX/.....XXXX/XXXXXX..."],["IST 710",7,1,"XX.X...XX/X.XX...../X.X....../X.XX...../........."],
+["Chemistry Lab",-1,0,"..XX.XX../XX......./........./XX......./........."]];
+const RM=RAW.map(([id,fl,ac,d])=>({id,fl,ac,iv:d.split("/").map(s=>{const a=[];for(let i=0;i<9;i++)if(s[i]=="X"){const l=a[a.length-1];if(l&&S[i]-l[1]<=10)l[1]=E[i];else a.push([S[i],E[i]])}return a})}));
+const FN=f=>f<0?"Annex (floor not given)":f==0?"Ground floor":f+["st","nd","rd"][f-1]||f+"th"+" floor";
+const fl=f=>f<0?"Annex (floor not given)":f==0?"Ground floor":f+(["st","nd","rd"][f-1]||"th")+" floor";
+const fm=m=>{m=Math.round(m);let h=Math.floor(m/60)%24,n=m%60;return(h%12||12)+":"+String(n).padStart(2,"0")+" "+(h<12?"AM":"PM")};
+const $=i=>document.getElementById(i);
+let live=true,base={d:0,s:0},t0=Date.now(),sel=null;
+function cur(){if(live){const n=new Date();return{d:(n.getDay()+6)%7,s:n.getHours()*3600+n.getMinutes()*60+n.getSeconds()}}return{d:base.d,s:base.s+(Date.now()-t0)/1000}}
+function info(r,d,s){const t=s/60;if(d>4)return{occ:false,until:Infinity,dur:1e9};const v=r.iv[d];
+ for(const[a,b]of v)if(t>=a&&t<b)return{occ:true,until:b,dur:0};
+ for(const[a]of v)if(a>t)return{occ:false,until:a,dur:a-t};return{occ:false,until:Infinity,dur:1e9}}
+const cls=i=>i.occ?"r":i.dur>=60?"g":"y";
+const sub=i=>i.occ?"In class till "+fm(i.until):i.until==Infinity?"Free rest of day":"Free until "+fm(i.until);
+function bcard(r,c,s0){const i=info(r,c.d,s0??c.s),m=i.until==Infinity?"Free all day":Math.floor(i.dur/60)+"h "+Math.round(i.dur%60)+"m free";
+ return `<div class="bc s-${cls(i)}${sel==r.id?" sel":""}" data-id="${r.id}"><div class="l"><b>${r.id}</b><small>${fl(r.fl)}</small><em>${r.ac?"AC":"Non-AC"}</em></div><div class="m"><b>${i.occ?"In class till":"Free until"}</b><span>${i.occ?fm(i.until):i.until==Infinity?"End of day":fm(i.until)}</span></div><div class="r"><span class="st">${i.occ?"Occupied":m}</span><small>80 seats</small><span class="go">${i.occ?"VIEW":"SELECT ›"}</span></div></div>`}
+function tile(r,c){return bcard(r,c)}
+function b3(fls,c){const T=[[-120,-60],[-70,20],[-110,110],[-70,190],[-130,215],[30,232],[240,236],[330,232],[420,228],[545,-40],[555,60],[585,140],[575,215],[150,-70],[300,-80],[420,-70],[-90,-100],[40,385],[200,395],[360,382],[500,390]];
+ let h='<div class="gd"></div><div class="ap"></div><div class="rd"></div><div class="pa"></div><div class="sg">SRM TRICHY · ACADEMIC BLOCK · MAIN ENTRANCE</div>'+T.map(([x,y])=>`<div class="tree" style="left:${x}px;top:${y}px"><div class="sh"></div><div class="tp"></div><div class="tp b"></div></div>`).join("");
+ fls.forEach((f,k)=>{h+=`<div class="slab${OF===f?" op":""}" data-f="${f}" style="transform:translateZ(${k*96+(OF!==null&&k>fls.indexOf(OF)?280:0)}px)"><div class="fa"></div><div class="co"></div><div class="sw"></div><div class="bw"></div><div class="st">Stairs / Lift</div><span class="lb">${f<0?"A":f==0?"G":f}</span>`+RM.filter(r=>r.fl==f).map((r,i)=>{const n=info(r,c.d,c.s),sh=n.occ?"Class till "+fm(n.until):n.until==Infinity?"Free all day":"Free till "+fm(n.until),b=i%2,W='<u class="wi sd"></u>',K='<u class="wi" style="left:64px;top:16px;width:48px;height:22px"></u>',D='<u class="wi" style="left:8px;top:14px;width:36px;height:24px"></u>',ys=b?[8,22,36]:[22,36,50],
+  bn=ys.map(y=>[8,66].map(x=>`<i style="left:${x}px;top:${y}px"><b></b></i>`).join("")).join("")+`<i style="left:48px;top:${b?54:6}px;width:24px"><b></b></i>`;
+  return `<div class="rm ${r.ac?"ac":"nac"}${n.occ?" occ":""}${sel==r.id?" sel":""}" data-id="${r.id}" style="--c:var(--${cls(n)});left:${8+(i>>1)*140}px;top:${b?106:8}px"><div class="fo"></div><div class="wb ${b?"wd":"wk"}">${b?D:K}</div><div class="wf ${b?"wk":"wd"}">${b?K:D}</div><div class="wl">${W}</div><div class="wr"></div>${bn}<div class="lbl"><b style="font-size:${r.id.length>8?14:22}px">${r.id}</b>${sh}<em>${r.ac?"AC":"Non-AC"} · 80 seats</em></div></div><div class="cl" style="--c:var(--${cls(n)});left:${8+(i>>1)*140+(b?62:2)}px;top:79px">${r.id.replace("Chemistry Lab","Chem Lab")}</div>`}).join("")+`</div>`});
+ return h+`<div class="slab" style="transform:translateZ(${fls.length*96+(OF!==null?280:0)}px)"><div class="fa" style="background:#b8bcc4;border:5px solid #8e95a1"></div><div class="tk" style="left:50px;top:60px"></div><div class="tk" style="left:130px;top:80px"></div><div class="rs">IST</div></div>`}
+function fit(){const sc0=$("scene");if(!sc0)return;const w=sc0.clientWidth;if(!w)return;const k=Math.min(1,w/640);SC=k;$("bld").style.setProperty("--s",k);$("scene").style.height=Math.round(860*k+40)+"px"}
+addEventListener("resize",fit);
+let OF=null,SC=1;
+const F3=()=>{const a=[...new Set(RM.map(r=>r.fl))].sort((x,y)=>x-y);return[...a.filter(f=>f>=0),...a.filter(f=>f<0)]};
+function fsum(){const e=$("fi");if(!e)return;if(OF===null){e.textContent="Tap a floor (or a button above) to pull it apart from the rest of the building.";return}
+ const c=cur(),rs=RM.filter(r=>r.fl==OF),fr=rs.filter(r=>!info(r,c.d,c.s).occ).length;e.textContent=fl(OF)+": "+fr+" free · "+(rs.length-fr)+" in class — tap the floor again or \"All floors\" to close."}
+function openFloor(f){OF=(f===null||OF===f)?null:f;
+ document.querySelectorAll("#fb button").forEach(b=>b.className=b.dataset.f==(OF===null?"all":OF)?"on":"");
+ const z=OF===null?1:1.5,H=$("scene").clientHeight,k=OF===null?0:F3().indexOf(OF),rx=$("til").value*Math.PI/180;
+ ty=OF===null?0:-0.42*H+k*96*Math.sin(rx)*SC*z;
+ $("zm").value=z*100;$("bld").style.setProperty("--z",z);$("bld").style.setProperty("--ty",ty+"px");render()}
+function buildFb(){$("fb").innerHTML='<button data-f="all" class="on">All floors</button>'+F3().map(f=>`<button data-f="${f}">${f<0?"Annex":f==0?"Ground":"Floor "+f}</button>`).join("");
+ document.querySelectorAll("#fb button").forEach(b=>b.onclick=()=>openFloor(b.dataset.f=="all"?null:+b.dataset.f))}
+function render(){const c=cur();$("clk").textContent=DN[c.d]+" "+fm(c.s/60)+(live?" (live)":"");
+ const fls=F3();
+ $("grid").innerHTML=fls.map(f=>`<div class="card fl"><h3>${fl(f)}</h3><div class="tiles">${RM.filter(r=>r.fl==f).map(r=>tile(r,c)).join("")}</div></div>`).join("");
+ $("bld").innerHTML=b3(fls,c);fsum();
+ det()}
+function det(){const b=$("det");if(!sel){b.hidden=true;return}const r=RM.find(x=>x.id==sel),c=cur(),i=info(r,c.d,c.s);b.hidden=false;
+ const left=i.until==Infinity?null:Math.max(0,i.until*60-c.s),h=Math.floor(left/3600),m=Math.floor(left%3600/60),s=Math.floor(left%60);
+ const cd=left==null?"No more classes today":[h,m,s].map(x=>String(x).padStart(2,"0")).join(":");
+ const msg=`📍 Heading to ${r.id}. It's free until ${i.until==Infinity?"the end of the day":fm(i.until)}. Come fast!`;
+ b.innerHTML=`<div class="row"><b style="font-size:18px">${r.id}</b><span>${fl(r.fl)} · ${r.ac?"AC":"Non-AC"} · seats 80</span><button style="margin-left:auto" data-close="1">✕</button></div>
+ <div>${i.occ?"Class in progress — free again at "+fm(i.until)+" (countdown to end)":"Free — next class starts in"}</div><div id="cd">${cd}</div>
+ ${i.occ?"":`<p style="margin:8px 0"><a class="wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">📣 Call the squad on WhatsApp</a></p>`}`}
+function tick(){if(sel)det()}
+document.addEventListener("click",e=>{if(!e.target.closest("#cave"))return;if(e.target.closest("[data-close]")){sel=null;render();return}if(moved&&e.target.closest("#scene")){moved=false;return}const t=e.target.closest(".t,.rm,.bc");if(t){sel=t.dataset.id;render();return}const sl=e.target.closest(".slab[data-f]");if(sl)openFloor(+sl.dataset.f)});
+
+let dx=null,dy=0,ty=0,moved=false,sx=0,sy=0,T1,T2;
+
+function bind(){
+$("day").innerHTML=DN.map((n,i)=>`<option value="${i}">${n}</option>`).join("");
+function setT(){live=false;const[h,m]=($("tm").value||"09:00").split(":");base={d:+$("day").value,s:h*3600+m*60};t0=Date.now();render()}
+$("day").onchange=$("tm").onchange=setT;
+$("now").onclick=()=>{live=true;sync();render()};
+function sync(){const c=cur();$("day").value=c.d;const m=Math.floor(c.s/60);$("tm").value=String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")}
+$("v1").onclick=()=>{$("grid").hidden=false;$("map").hidden=true;$("v1").className="on";$("v2").className=""};
+$("v2").onclick=()=>{$("grid").hidden=true;$("map").hidden=false;$("v2").className="on";$("v1").className="";fit()};
+$("rot").oninput=e=>$("bld").style.setProperty("--rz",e.target.value+"deg");
+$("zm").oninput=e=>$("bld").style.setProperty("--z",e.target.value/100);
+$("til").oninput=e=>$("bld").style.setProperty("--rx",e.target.value+"deg");
+$("scene").onpointerdown=e=>{dx=e.clientX;dy=e.clientY;sx=dx;sy=dy;moved=false};window.onpointerup=()=>dx=null;$("scene").onpointermove=e=>{if(dx!==null){if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>6)moved=true;const v=Math.max(-180,Math.min(180,+$("rot").value+(e.clientX-dx)/3));$("rot").value=v;$("bld").style.setProperty("--rz",v+"deg");ty+=e.clientY-dy;$("bld").style.setProperty("--ty",ty+"px");dx=e.clientX;dy=e.clientY}};
+$("scene").addEventListener("wheel",e=>{e.preventDefault();const v=Math.max(60,Math.min(300,+$("zm").value*(e.deltaY<0?1.1:.91)));$("zm").value=v;$("bld").style.setProperty("--z",v/100)},{passive:false});
+// Natural-language parser (rule-based, runs offline)
+function parse(q){q=q.toLowerCase();const p={floor:null,ac:null,dur:60,start:null};
+ if(/ground|\bgf\b/.test(q))p.floor=0;else{const m=q.match(/(\d)\s*(?:st|nd|rd|th)?\s*floor|floor\s*(\d)/);if(m)p.floor=+(m[1]||m[2])}
+ if(/non[- ]?ac|without ac|no ac/.test(q))p.ac=false;else if(/\bac\b|a\/c|air.?con/.test(q))p.ac=true;
+ let m;if(m=q.match(/(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|h)\b/))p.dur=m[1]*60;else if(m=q.match(/(\d+)\s*min/))p.dur=+m[1];else if(/half an hour|half hour/.test(q))p.dur=30;
+ if(m=q.match(/(?:at|from|after)\s*(\d{1,2})(?::(\d\d))?\s*(am|pm)?/)){let h=+m[1];const ap=m[3];if(ap=="pm"&&h<12)h+=12;if(ap=="am"&&h==12)h=0;if(!ap&&h<8)h+=12;p.start=h*3600+(+m[2]||0)*60}
+ return p}
+$("go").onclick=()=>{const p=parse($("q").value),c=cur(),s=p.start??c.s;
+ const sc=(r,strict)=>{const i=info(r,c.d,s);if(i.occ||i.dur<p.dur)return null;if(p.ac!==null&&!!r.ac!=p.ac)return null;if(strict&&p.floor!==null&&r.fl!=p.floor)return null;return{r,i,k:(p.floor!==null?Math.abs(r.fl-p.floor)*1000:0)-Math.min(i.dur,600)}};
+ let res=RM.map(r=>sc(r,true)).filter(Boolean),relaxed=false;
+ if(!res.length){res=RM.map(r=>sc(r,false)).filter(Boolean);relaxed=true}
+ res.sort((a,b)=>a.k-b.k);res=res.slice(0,6);
+ const desc=`${p.ac===null?"any":p.ac?"AC":"non-AC"} room, ${p.floor===null?"any floor":fl(p.floor)}, ${p.dur>=60?p.dur/60+" h":p.dur+" min"} from ${fm(s/60)}`;
+ $("out").innerHTML=`<p class="s" style="margin:8px 0">Understood: ${desc}</p>`+(res.length?(relaxed?`<p><b>No exact match on that floor</b> — nearest alternatives:</p>`:"")+res.map(x=>bcard(x.r,c,s)).join(""):`<p>No room is free that long. Try a shorter window or a later time.</p>`)};
+document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{$("q").value=($("q").value+" "+b.dataset.t).trim()});
+$("q").onkeydown=e=>{if(e.key=="Enter")$("go").click()};
+buildFb();sync();render();clearInterval(T1);clearInterval(T2);T1=setInterval(tick,1000);T2=setInterval(()=>{if(live)sync();render()},30000);
+
+}
+function free(n){const c=cur();return RM.map(r=>({r,i:info(r,c.d,c.s)})).filter(x=>!x.i.occ).sort((a,b)=>b.i.dur-a.i.dur).slice(0,n).map(({r,i})=>({id:r.id,ac:r.ac,txt:i.until==Infinity?'free all day':'till '+fm(i.until)}))}
+return{mount(){bind()},unmount(){clearInterval(T1);clearInterval(T2)},free,select(id){sel=id}};
+})();
+/* ===== Campus theme, customisation, scenery, hero ===== */
+const PRESETS={
+ "SRM Blue":{accent:"#2f6bff",gold:"#f4b41a",sky:"#a9cdee",grass:"#86b874"},
+ "Marigold":{accent:"#f0a500",gold:"#ffd166",sky:"#f6d8a8",grass:"#9cbf5b"},
+ "Laterite":{accent:"#d9583b",gold:"#f4b41a",sky:"#f0c9b0",grass:"#7fa35a"},
+ "Paddy":{accent:"#1f9d6b",gold:"#f4d35e",sky:"#b8e0d2",grass:"#6fb56a"},
+ "Violet":{accent:"#8b5cf6",gold:"#f4b41a",sky:"#cdbdf2",grass:"#86b874"}};
+let lastTab=null,scT=null;
+const lum=h=>{const n=parseInt(h.slice(1),16),f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(n>>16)+.7152*f(n>>8&255)+.0722*f(n&255)};
+function campusArt(){
+  const w=[...Array(9)].map((_,i)=>[250,315,380].map(y=>`<rect x="${470+i*72}" y="${y}" width="44" height="30" rx="3"/>`).join("")).join("");
+  const t=[80,240,1290,1450,1560].map((x,i)=>`<rect x="${x-6}" y="430" width="12" height="70" fill="#5a3a1e"/><circle cx="${x}" cy="${410-i%2*20}" r="${52+i%3*8}" fill="#2f8f46"/>`).join("");
+  const s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#173a7a"/><stop offset=".55" stop-color="#f2b46a"/><stop offset="1" stop-color="#f7d9a0"/></linearGradient></defs><rect width="1600" height="600" fill="url(#a)"/><circle cx="1240" cy="200" r="70" fill="#ffe7a8" opacity=".9"/><path d="M0 430Q300 360 620 420T1600 400V600H0Z" fill="#3c7a4a"/><rect x="430" y="210" width="740" height="250" fill="#e8dcc4"/><rect x="430" y="196" width="740" height="18" fill="#1d3f8f"/><g fill="#7fb4e6">${w}</g><rect x="640" y="150" width="320" height="46" rx="4" fill="#1d3f8f" stroke="#fff" stroke-width="4"/><text x="800" y="182" font-family="sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">SRM IST · TIRUCHIRAPPALLI</text><rect y="500" width="1600" height="100" fill="#3d434c"/><path d="M0 550H1600" stroke="#fff" stroke-width="4" stroke-dasharray="40 30"/>${t}</svg>`;
+  return "url('data:image/svg+xml,"+encodeURIComponent(s)+"')";
+}
+const photoCss=u=>"url('"+u.replace(/'/g,"%27")+"')";
+function heroBg(){const c=state.custom;return (c.useArt||!c.photos.length)?campusArt():photoCss(c.photos[0])}
+function updateScenery(){
+  let el=document.getElementById("scenery");
+  if(!el){el=document.createElement("div");el.id="scenery";el.innerHTML="<i></i><i></i><b></b>";document.body.prepend(el)}
+  const c=state.custom,urls=(c.useArt||!c.photos.length)?[null]:c.photos,key=JSON.stringify(urls.map(u=>u&&u.length));
+  if(el.dataset.k===key)return;
+  el.dataset.k=key;clearInterval(scT);
+  const [a,b]=el.querySelectorAll("i"),ok=[];let pend=urls.length,idx=0;
+  const set=(n,u)=>{n.style.backgroundImage=u?photoCss(u):campusArt()};
+  const go=()=>{const L=ok.length?ok:[null];set(a,L[0]);a.classList.add("on");b.classList.remove("on");
+    if(L.length>1){let cur=a,nx=b;scT=setInterval(()=>{idx=(idx+1)%L.length;set(nx,L[idx]);nx.classList.add("on");cur.classList.remove("on");[cur,nx]=[nx,cur]},9000)}};
+  urls.forEach(u=>{if(!u){ok.push(u);if(!--pend)go();return}
+    const im=new Image();im.onload=()=>{ok.push(u);if(!--pend)go()};im.onerror=()=>{if(!--pend)go()};im.src=u});
+}
+function applyCustom(){
+  const c=state.custom,r=document.documentElement.style;
+  r.setProperty("--accent",c.accent);r.setProperty("--gold",c.gold);r.setProperty("--radius",c.radius+"px");r.setProperty("--overlay",c.overlay);
+  r.setProperty("--onaccent",lum(c.accent)>.42?"#111":"#fff");r.setProperty("--sky1",c.sky);r.setProperty("--grass",c.grass);
+  document.documentElement.dataset.anim=c.anim?"on":"off";updateScenery();
+}
+function nextClass(){
+  const n=new Date(),m=n.getHours()*60+n.getMinutes(),f=x=>{const[h,i]=x.split(":");return h*60+ +i};
+  return scheduledOn(TODAY_ISO).filter(c=>c.time).find(c=>f(c.time[1])>m)||null;
+}
+function heroHtml(o){
+  const c=state.custom;if(!c.showHero)return"";
+  const p=state.profile,h=new Date().getHours(),g=h<12?"Good morning":h<17?"Good afternoon":"Good evening",nc=nextClass(),fr=Cave.free(4);
+  return `<section class="hero" style="--hbg:${heroBg()}"><div class="ph"></div><div class="hero-in"><div><small>${escapeHtml(p.college||"SRM IST Tiruchirappalli")}</small><h2>${g}, ${escapeHtml(p.displayName||"there")}</h2><p>${nc?`Next class: <b>${escapeHtml(nc.subjectName)}</b> · P${nc.period} · ${nc.time[0]}.`:"No more classes on your timetable today."} Attendance so far: <b>${o.currentPct.toFixed(1)}%</b>.</p></div>
+  ${c.showRooms?`<div class="hero-rooms"><span>Free rooms right now</span><div>${fr.map(x=>`<button class="rchip" data-room="${escapeHtml(x.id)}"><b>${escapeHtml(x.id)}</b> ${x.ac?"AC":"Non-AC"} · ${x.txt}</button>`).join("")||"<em>No free room found</em>"}</div><button class="btn primary small" data-tab="rooms">Open cave map</button></div>`:""}</div></section>`;
+}
+function customiseHtml(){
+  const c=state.custom;
+  return `<div class="grid two">
+<section class="card section"><h3>Look and feel</h3><div class="swatches">${Object.entries(PRESETS).map(([n,p])=>`<button class="sw${c.accent===p.accent?" on":""}" data-preset="${n}" style="--a:${p.accent};--g:${p.gold}"><i></i><span>${n}</span></button>`).join("")}</div>
+<div class="form-grid" style="margin-top:14px">
+<div class="field"><label>Accent colour</label><input type="color" id="cuAccent" value="${c.accent}"></div>
+<div class="field"><label>Highlight colour</label><input type="color" id="cuGold" value="${c.gold}"></div>
+<div class="field"><label>Theme</label><select id="cuTheme">${["system","light","dark"].map(x=>`<option ${state.theme===x?"selected":""}>${x}</option>`).join("")}</select></div>
+<div class="field"><label>App name</label><input id="cuBrand" value="${escapeHtml(c.brand)}" maxlength="18"></div>
+<div class="field"><label>Corner roundness (${c.radius}px)</label><input type="range" id="cuRadius" min="6" max="30" value="${c.radius}"></div>
+<div class="field"><label>Photo dimming (${Math.round(c.overlay*100)}%)</label><input type="range" id="cuOverlay" min="40" max="95" value="${Math.round(c.overlay*100)}"></div></div>
+<div class="row" style="margin-top:14px"><label class="tog"><input type="checkbox" id="cuAnim" ${c.anim?"checked":""}> Animations</label><label class="tog"><input type="checkbox" id="cuHero" ${c.showHero?"checked":""}> Dashboard banner</label><label class="tog"><input type="checkbox" id="cuRooms" ${c.showRooms?"checked":""}> Free rooms on banner</label></div></section>
+<section class="card section"><h3>Campus photos</h3><div class="mini">Photos rotate as the background and on the dashboard banner. With none added, the built-in SRM Trichy illustration is used.</div>
+<div class="thumbs">${c.photos.map((u,i)=>`<div class="th" style="background-image:${photoCss(u)}"><button data-rmphoto="${i}" title="Remove">×</button></div>`).join("")||'<div class="mini">No photos added yet.</div>'}</div>
+<div class="row" style="margin-top:12px"><input id="cuUrl" placeholder="Paste an image address (https://…)" style="flex:1;min-width:180px"><button class="btn primary" id="cuAddUrl">Add photo</button></div>
+<div class="row" style="margin-top:10px"><label class="btn" for="cuFile">Upload photos</label><input id="cuFile" type="file" accept="image/*" multiple hidden><button class="btn" id="cuSearch">Find SRM Trichy photos online</button><label class="tog"><input type="checkbox" id="cuArt" ${c.useArt?"checked":""}> Use illustration instead</label></div></section></div>
+<section class="card section" style="margin-top:14px"><h3>3D cave map colours</h3><div class="form-grid"><div class="field"><label>Sky</label><input type="color" id="cuSky" value="${c.sky}"></div><div class="field"><label>Lawn</label><input type="color" id="cuGrass" value="${c.grass}"></div></div><div class="row" style="margin-top:14px"><button class="btn danger" id="cuReset">Reset customisation</button></div></section>`;
+}
+function shrink(f){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=im.width*k;cv.height=im.height*k;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",.78))};im.src=r.result};r.readAsDataURL(f)})}
+function wireExtras(){document.querySelectorAll("[data-room]").forEach(b=>b.onclick=()=>{Cave.select(b.dataset.room);state.tab="rooms";saveState();render()})}
+function wireCustomise(){
+  const $$=id=>document.getElementById(id);if(!$$("cuAccent"))return;const c=state.custom;
+  const live=(id,key,fn=v=>v)=>{$$(id).oninput=e=>{c[key]=fn(e.target.value);applyCustom()};$$(id).onchange=()=>{saveState();render()}};
+  live("cuAccent","accent");live("cuGold","gold");live("cuSky","sky");live("cuGrass","grass");live("cuRadius","radius",Number);live("cuOverlay","overlay",v=>v/100);
+  document.querySelectorAll("[data-preset]").forEach(b=>b.onclick=()=>{Object.assign(c,PRESETS[b.dataset.preset]);saveState();render()});
+  $$("cuTheme").onchange=e=>{state.theme=e.target.value;saveState();render()};
+  $$("cuBrand").onchange=e=>{c.brand=e.target.value.trim()||"bunksite";saveState();render()};
+  [["cuAnim","anim"],["cuHero","showHero"],["cuRooms","showRooms"],["cuArt","useArt"]].forEach(([id,k])=>$$(id).onchange=e=>{c[k]=e.target.checked;saveState();render()});
+  $$("cuAddUrl").onclick=()=>{const u=$$("cuUrl").value.trim();if(!/^https?:\/\//i.test(u))return toast("Paste a full image address starting with https://");c.photos.push(u);c.useArt=false;saveState();render();toast("Photo added.")};
+  $$("cuFile").onchange=async e=>{for(const f of e.target.files)c.photos.push(await shrink(f));c.useArt=false;saveState();render()};
+  $$("cuSearch").onclick=()=>window.open("https://www.google.com/search?tbm=isch&q="+encodeURIComponent("SRM IST Tiruchirappalli campus"),"_blank");
+  document.querySelectorAll("[data-rmphoto]").forEach(b=>b.onclick=()=>{c.photos.splice(+b.dataset.rmphoto,1);saveState();render()});
+  $$("cuReset").onclick=()=>{state.custom=clone(CUSTOM_DEFAULTS);saveState();render()};
+}
+
+render();
+</script>
+</body>
+</html>
